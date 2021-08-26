@@ -1,32 +1,79 @@
+import { AddressLike } from 'ethereumjs-util';
+import { TransactionBody, TransactionType } from './transactions';
+import { FeePayerType } from './share';
+
+/**
+ *
+ * @export
+ * @interface Estimate
+ */
 export interface Estimate {
   /**
-   * Transaction type (transfer | swap (not supported yet) | add_liquidity (not supported yet))
-   * @type {string}
+   * Transaction type
+   * @type {TransactionType}
    * @memberof Estimate
    */
-  transactionType: string;
+  transactionType: TransactionType;
   /**
    * Transaction body
-   * @type {any}
+   * @type {TransactionBody}
    * @memberof Estimate
    */
-  transactionBody: any;
+  transactionBody: TransactionBody[];
   /**
    * User address
-   * @type {string}
+   * @type {AddressLike}
    * @memberof Estimate
    */
-  addressFrom: string;
+  addressFrom: AddressLike;
   /**
    * Token to spend in order to cover network fee
-   * @type {string}
+   * @type {AddressLike}
    * @memberof Estimate
    */
-  erc20TokenToPayFee: string;
+  erc20TokenToPayFee: AddressLike;
   /**
    * Fee payer: receiver or sender
-   * @type {string}
+   * @type {FeePayerType}
    * @memberof Estimate
    */
-  feePayer: string;
+  feePayer: FeePayerType;
+}
+
+/**
+ *
+ * @export
+ * @interface EstimationResponse
+ */
+export interface EstimationResponse {
+  /**
+   *
+   * @type {boolean}
+   * @memberof EstimationResponse
+   */
+  status?: boolean;
+  /**
+   *
+   * @type {boolean}
+   * @memberof EstimationResponse
+   */
+  approveRequired?: boolean;
+  /**
+   *
+   * @type {any}
+   * @memberof EstimationResponse
+   */
+  marketGasPriceGwei?: any;
+  /**
+   *
+   * @type {any}
+   * @memberof EstimationResponse
+   */
+  executionSwap?: any;
+  /**
+   *
+   * @type {FeePayerType}
+   * @memberof EstimationResponse
+   */
+  feePayer?: FeePayerType;
 }

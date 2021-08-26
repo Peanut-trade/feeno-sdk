@@ -1,15 +1,11 @@
 /**
  *
  * @export
- * @interface Cancel
+ * @interface CancellationResponse
  */
-import type { BundleId } from './Share';
+import type { BundleId } from './share';
 
-export interface Cancel {
-  /**
-   * Identifier of transaction
-   * @type {BundleId}
-   * @memberof Cancel
-   */
+export interface CancellationResponse {
   bundleId: BundleId;
+  status: boolean;
 }

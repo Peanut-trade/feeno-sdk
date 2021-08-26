@@ -1,23 +1,22 @@
-export class FeeNo {
-  private static instance: FeeNo;
+import {
+  BundleId,
+  CancellationResponse,
+  Estimate,
+  EstimationResponse,
+  SubmissionResponse,
+  Submit,
+} from './types';
+import { TransactionResult } from './types/TransactionResult';
 
-  private _storage: string = '';
+export interface IFeeNo {
+  estimate(params: Estimate): Promise<EstimationResponse>;
+  submit(params: Submit): Promise<SubmissionResponse>;
+  cancel(bundleId: BundleId): Promise<CancellationResponse>;
+  getTransaction(bundleId: BundleId): Promise<TransactionResult>;
+}
 
+export class FeeNo implements IFeeNo {
+  // TODO: Need to add provider as argument for constructor and save for sign
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
-
-  public static getInstance(): FeeNo {
-    if (!FeeNo.instance) {
-      FeeNo.instance = new FeeNo();
-    }
-
-    return FeeNo.instance;
-  }
-
-  public setStorage(storage: string) {
-    this._storage = storage;
-  }
-
-  public getStorage(): string {
-    return this._storage;
-  }
 }
