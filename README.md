@@ -21,3 +21,8 @@ Jest tests are set up to run with `npm test` or `yarn test`.
 ### Bundle Analysis
 
 [`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
+
+### Configurations Variables
+```dotenv
+API_URL                         Use api url
+```
