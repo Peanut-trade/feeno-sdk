@@ -36,7 +36,7 @@ describe('FeeNo', () => {
     expect(feeNoSubmit.transactionHashes?.length).toBe(3);
   });
 
-  it('estimate should return json', async () => {
+  it('estimate should return correct response', async () => {
     jest.setTimeout(20000);
     const data: Estimate = {
       transactionType: TransactionType.TransferType,
@@ -49,7 +49,16 @@ describe('FeeNo', () => {
       erc20TokenToPayFee: '0xc9D7E158d07965c661FD3421DC5DB1176856DFb5',
       feePayer: 'receiver',
     };
+    const response = await feeNo.estimate(data);
+    console.log(response);
 
-    console.log(await feeNo.estimate(data));
+    expect(response.status).toBe(true);
+    expect(typeof response.id).toBe('string');
+    expect(typeof response.approveRequired).toBe('boolean');
+    expect(response.marketGasPriceGwei?.baseFee).toBeGreaterThan(0);
+    expect(response.feePayer).toBe('receiver' || 'sender');
+    expect(response.executionSwap?.dexSwap.ethTokenPrice).toBeGreaterThan(0);
+    expect(response.executionSwap?.dexSwap.totalGasUsage).toBeGreaterThan(0);
+    expect(typeof response.executionSwap?.cexSwap.message).toBe('string');
   });
 });

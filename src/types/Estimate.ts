@@ -94,33 +94,32 @@ export interface MarketGasPriceGwei {
 }
 
 export interface ExecutionSwap {
-  [key: string]:
-    | {
-        ethTokenPrice: number;
-        totalGasUsage: number;
-        simulations: {
-          ethTransfer: {
-            status: EstimateStatus;
-            gasUsage: number;
-          };
-          approve: {
-            id: EstimationId;
-            status: EstimateStatus;
-            gasUsage: number;
-          };
-          execute: {
-            id: EstimationId;
-            status: EstimateStatus;
-            gasUsage: number;
-          };
-        };
-        miningSpeed: {
-          fast: MiningSpeed;
-          medium: MiningSpeed;
-          slow: MiningSpeed;
-        };
-      }
-    | { message: string };
+  dexSwap: {
+    ethTokenPrice: number;
+    totalGasUsage: number;
+    simulations: {
+      ethTransfer: {
+        status: EstimateStatus;
+        gasUsage: number;
+      };
+      approve: {
+        id: EstimationId;
+        status: EstimateStatus;
+        gasUsage: number;
+      };
+      execute: {
+        id: EstimationId;
+        status: EstimateStatus;
+        gasUsage: number;
+      };
+    };
+    miningSpeed: {
+      fast: MiningSpeed;
+      medium: MiningSpeed;
+      slow: MiningSpeed;
+    };
+  };
+  cexSwap: { message: string };
 }
 
 export interface MiningSpeed {

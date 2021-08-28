@@ -6,6 +6,7 @@ export interface IFeeNo {
     getTransaction(bundleId: BundleId): Promise<TransactionResult>;
 }
 export declare class FeeNo implements IFeeNo {
+    private apiUrl;
     constructor();
     cancel(bundleId: BundleId): Promise<CancellationResponse>;
     estimate(params: Estimate): Promise<EstimationResponse>;

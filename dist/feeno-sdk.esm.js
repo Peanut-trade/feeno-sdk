@@ -809,6 +809,8 @@ var TransactionType;
   TransactionType["TransferType"] = "transfer";
   TransactionType["SwapInputType"] = "swapInput";
   TransactionType["SwapOutputType"] = "swapOutput";
+  TransactionType["SwapInputSingleType"] = "swapInputSingle";
+  TransactionType["SwapOutputSingleType"] = "swapOutputSingle";
   TransactionType["MintPositionType"] = "mintPosition";
   TransactionType["ClaimFeeType"] = "claimFee";
   TransactionType["AddLiquidityType"] = "addLiquidity";
@@ -819,7 +821,9 @@ config();
 var FeeNo = /*#__PURE__*/function () {
   // TODO: Need to add provider as argument for constructor and save for sign
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  function FeeNo() {}
+  function FeeNo() {
+    this.apiUrl = process.env.API_URL;
+  }
 
   var _proto = FeeNo.prototype;
 
@@ -837,7 +841,7 @@ var FeeNo = /*#__PURE__*/function () {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              url = process.env.API_URL + "/estimate";
+              url = this.apiUrl + "/estimate";
               _context.next = 3;
               return axios.post(url, params);
 
@@ -850,7 +854,7 @@ var FeeNo = /*#__PURE__*/function () {
               return _context.stop();
           }
         }
-      }, _callee);
+      }, _callee, this);
     }));
 
     function estimate(_x) {

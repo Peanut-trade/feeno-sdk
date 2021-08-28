@@ -4,17 +4,18 @@ export enum TransactionType {
   TransferType = 'transfer',
   SwapInputType = 'swapInput',
   SwapOutputType = 'swapOutput',
+  SwapInputSingleType = 'swapInputSingle',
+  SwapOutputSingleType = 'swapOutputSingle',
   MintPositionType = 'mintPosition',
   ClaimFeeType = 'claimFee',
   AddLiquidityType = 'addLiquidity',
   RemoveLiquidityType = 'removeLiquidity',
 }
 
-export interface TransactionDetails {
-  [key: string]: AddressLike | BNLike | string | number;
-}
 export type TransactionBody =
   | TransactionForTransfer
+  | TransactionForExactInput
+  | TransactionForExactOutput
   | TransactionForExactInputSingle
   | TransactionForExactOutputSingle;
 
@@ -24,12 +25,28 @@ export interface TransactionForTransfer {
   tokenContractAddress: AddressLike;
 }
 
+export interface TransactionForExactInput {
+  path: string;
+  recipient: AddressLike;
+  deadline: number;
+  amountIn: BNLike;
+  amountOutMinimum: BNLike;
+}
+
+export interface TransactionForExactOutput {
+  path: string;
+  recipient: AddressLike;
+  deadline: number;
+  amountOut: BNLike;
+  amountInMaximum: BNLike;
+}
+
 export interface TransactionForExactInputSingle {
   tokenIn: AddressLike;
   tokenOut: AddressLike;
   fee: BNLike;
   recipient: AddressLike;
-  deadline: BNLike;
+  deadline: number;
   amountIn: BNLike;
   amountOutMinimum: BNLike;
   sqrtPriceLimitX96: BNLike;
@@ -40,7 +57,7 @@ export interface TransactionForExactOutputSingle {
   tokenOut: AddressLike;
   fee: BNLike;
   recipient: AddressLike;
-  deadline: BNLike;
+  deadline: number;
   amountOut: BNLike;
   amountInMaximum: BNLike;
   sqrtPriceLimitX96: BNLike;

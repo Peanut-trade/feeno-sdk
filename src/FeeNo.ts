@@ -21,6 +21,8 @@ export interface IFeeNo {
   getTransaction(bundleId: BundleId): Promise<TransactionResult>;
 }
 export class FeeNo implements IFeeNo {
+  private apiUrl = process.env.API_URL;
+
   // TODO: Need to add provider as argument for constructor and save for sign
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
@@ -30,7 +32,7 @@ export class FeeNo implements IFeeNo {
   }
 
   async estimate(params: Estimate): Promise<EstimationResponse> {
-    const url = `${process.env.API_URL}/estimate`;
+    const url = `${this.apiUrl}/estimate`;
     const response = await axios.post(url, params);
     return response.data;
   }
