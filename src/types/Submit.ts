@@ -3,13 +3,15 @@
  * @export
  * @interface Submit
  */
+import { EstimationId } from './share';
+
 export interface Submit {
   /**
    * Identifier of estimation result received during estimate operation
    * @type {string}
    * @memberof Submit
    */
-  estimationId: string;
+  estimationId: EstimationId;
   /**
    * Signed approval transaction (if estimation result param \"approveRequired\" == true). Hex | null
    * @type {string}
@@ -74,8 +76,8 @@ export interface SubmissionResponse {
   blocksCountToResubmit?: number;
   /**
    *
-   * @type {Array<string>}
+   * @type {string[]}
    * @memberof SubmissionResponse
    */
-  transactionHashes?: Array<string>;
+  transactionHashes?: string[];
 }

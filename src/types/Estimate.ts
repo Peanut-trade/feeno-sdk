@@ -1,6 +1,6 @@
-import { AddressLike } from 'ethereumjs-util';
+import { AddressLike, BNLike } from 'ethereumjs-util';
 import { TransactionBody, TransactionType } from './transactions';
-import { FeePayerType } from './share';
+import { EstimateStatus, EstimationId, FeePayerType } from './share';
 
 /**
  *
@@ -19,7 +19,7 @@ export interface Estimate {
    * @type {TransactionBody}
    * @memberof Estimate
    */
-  transactionBody: TransactionBody[];
+  transactionBody: TransactionBody;
   /**
    * User address
    * @type {AddressLike}
@@ -54,26 +54,79 @@ export interface EstimationResponse {
   status?: boolean;
   /**
    *
+   * @type {string}
+   * @memberof EstimationResponse
+   */
+  id: EstimationId;
+  /**
+   *
    * @type {boolean}
    * @memberof EstimationResponse
    */
   approveRequired?: boolean;
   /**
    *
-   * @type {any}
+   * @type {MarketGasPriceGwei}
    * @memberof EstimationResponse
    */
-  marketGasPriceGwei?: any;
-  /**
-   *
-   * @type {any}
-   * @memberof EstimationResponse
-   */
-  executionSwap?: any;
+  marketGasPriceGwei?: MarketGasPriceGwei;
   /**
    *
    * @type {FeePayerType}
    * @memberof EstimationResponse
    */
   feePayer?: FeePayerType;
+  /**
+   *
+   * @type {ExecutionSwap}
+   * @memberof EstimationResponse
+   */
+  executionSwap?: ExecutionSwap;
+}
+
+export interface MarketGasPriceGwei {
+  baseFee: number;
+  maxPriorityFeePerGas: {
+    fast: number;
+    medium: number;
+    slow: number;
+  };
+}
+
+export interface ExecutionSwap {
+  dexSwap: {
+    ethTokenPrice: number;
+    totalGasUsage: number;
+    simulations: {
+      ethTransfer: {
+        status: EstimateStatus;
+        gasUsage: number;
+      };
+      approve: {
+        id: EstimationId;
+        status: EstimateStatus;
+        gasUsage: number;
+      };
+      execute: {
+        id: EstimationId;
+        status: EstimateStatus;
+        gasUsage: number;
+      };
+    };
+    miningSpeed: {
+      fast: MiningSpeed;
+      medium: MiningSpeed;
+      slow: MiningSpeed;
+    };
+  };
+  cexSwap: { message: string };
+}
+
+export interface MiningSpeed {
+  ethGasFee: number;
+  tokenBasedGasFee: number;
+  data: {
+    transactions: [AddressLike, BNLike, string][];
+    messageForSing: string;
+  };
 }

@@ -23,14 +23,17 @@
     "size": "size-limit",
     "analyze": "size-limit --why",
     "hooks:pre-commit": "yarn lint && yarn prettier && yarn build",
-    "hooks:pre-push": "yarn test && yarn size"
+    "hooks:pre-push": "yarn test"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
     "@size-limit/preset-small-lib": "^5.0.3",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-typescript-prettier": "^4.2.0",
+    "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-prettier": "^3.4.0",
     "husky": "^7.0.1",
@@ -56,6 +59,8 @@
     }
   ],
   "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^10.0.0",
     "ethereumjs-util": "^7.1.0",
     "ethers": "^5.4.5"
   }
