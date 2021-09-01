@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { config } from 'dotenv';
+import { ethers } from 'ethers';
+import { Web3Provider } from '@ethersproject/providers';
 
 import {
   BundleId,
@@ -10,6 +12,7 @@ import {
   Submit,
   TransactionStatus,
   TransactionResult,
+  Sign,
 } from './types';
 
 config();
@@ -19,13 +22,18 @@ export interface IFeeNo {
   submit(params: Submit): Promise<SubmissionResponse>;
   cancel(bundleId: BundleId): Promise<CancellationResponse>;
   getTransaction(bundleId: BundleId): Promise<TransactionResult>;
+  sign(params: Sign): Promise<string>;
 }
 export class FeeNo implements IFeeNo {
   private apiUrl = process.env.API_URL;
 
+  provider: Web3Provider;
+
   // TODO: Need to add provider as argument for constructor and save for sign
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() {}
+  constructor(provider: Web3Provider) {
+    this.provider = provider;
+  }
 
   cancel(bundleId: BundleId): Promise<CancellationResponse> {
     return Promise.resolve({ bundleId, status: true });
@@ -73,5 +81,16 @@ export class FeeNo implements IFeeNo {
         '0x46bd0cc25add06ff8847c66bf3374dc65c291a1f7ff4ee3734fdb99f38d84d9a',
       ],
     });
+  }
+
+  async sign(params: Sign): Promise<string> {
+    if (!this.provider.provider.request) return '';
+
+    const signature = await this.provider.provider.request({
+      method: 'eth_sign',
+      params: [params.adressFrom, ethers.utils.hexlify(params.messaage)],
+    });
+
+    return signature;
   }
 }
