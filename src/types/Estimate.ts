@@ -40,6 +40,12 @@ export interface Estimate {
   feePayer: FeePayerType;
 }
 
+export interface approveRequired {
+  tokenAddress: AddressLike;
+  spender: AddressLike;
+  amount: BNLike;
+}
+
 /**
  *
  * @export
@@ -60,10 +66,10 @@ export interface EstimationResponse {
   id: EstimationId;
   /**
    *
-   * @type {boolean}
+   * @type {approveRequired}
    * @memberof EstimationResponse
    */
-  approveRequired?: boolean;
+  approveRequired: approveRequired[];
   /**
    *
    * @type {MarketGasPriceGwei}
