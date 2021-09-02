@@ -17,7 +17,9 @@ export type TransactionBody =
   | TransactionForExactInput
   | TransactionForExactOutput
   | TransactionForExactInputSingle
-  | TransactionForExactOutputSingle;
+  | TransactionForExactOutputSingle
+  | TransactionForSwapExactTokensForTokens
+  | TransactionForSwapTokensForExactTokens;
 
 export interface TransactionForTransfer {
   addressTo: AddressLike;
@@ -61,4 +63,20 @@ export interface TransactionForExactOutputSingle {
   amountOut: BNLike;
   amountInMaximum: BNLike;
   sqrtPriceLimitX96: BNLike;
+}
+
+export interface TransactionForSwapExactTokensForTokens {
+  amountIn: BNLike;
+  amountOutMin: BNLike;
+  path: AddressLike[];
+  to: AddressLike;
+  deadline: number;
+}
+
+export interface TransactionForSwapTokensForExactTokens {
+  amountOut: BNLike;
+  amountInMax: BNLike;
+  path: AddressLike[];
+  to: AddressLike;
+  deadline: number;
 }
