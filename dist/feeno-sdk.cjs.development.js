@@ -6,6 +6,7 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var axios = _interopDefault(require('axios'));
 var dotenv = require('dotenv');
+var ethers = require('ethers');
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
@@ -823,8 +824,9 @@ dotenv.config();
 var FeeNo = /*#__PURE__*/function () {
   // TODO: Need to add provider as argument for constructor and save for sign
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  function FeeNo() {
+  function FeeNo(provider) {
     this.apiUrl = process.env.API_URL;
+    this.provider = provider;
   }
 
   var _proto = FeeNo.prototype;
@@ -891,6 +893,54 @@ var FeeNo = /*#__PURE__*/function () {
       transactionHashes: ['0x5b42ee656f8afc14a715180ed083f8fe260050fc8f5f5ecf133a205ed08ea3fc', '0x404eed83889ccc298d63ea664cfe887873f873849f430fb2c65c799b026ab26f', '0x46bd0cc25add06ff8847c66bf3374dc65c291a1f7ff4ee3734fdb99f38d84d9a']
     });
   };
+
+  _proto.sign = /*#__PURE__*/function () {
+    var _sign = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2(params) {
+      var signature;
+      return runtime_1.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              if (this.provider) {
+                _context2.next = 2;
+                break;
+              }
+
+              throw new Error('No provider specified');
+
+            case 2:
+              if (this.provider.provider.request) {
+                _context2.next = 4;
+                break;
+              }
+
+              return _context2.abrupt("return", '');
+
+            case 4:
+              _context2.next = 6;
+              return this.provider.provider.request({
+                method: 'eth_sign',
+                params: [params.adressFrom, ethers.ethers.utils.hexlify(params.messaage)]
+              });
+
+            case 6:
+              signature = _context2.sent;
+              return _context2.abrupt("return", signature);
+
+            case 8:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+
+    function sign(_x2) {
+      return _sign.apply(this, arguments);
+    }
+
+    return sign;
+  }();
 
   return FeeNo;
 }();

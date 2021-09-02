@@ -59,6 +59,7 @@
     }
   ],
   "dependencies": {
+    "@ethersproject/providers": "^5.4.5",
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
     "ethereumjs-util": "^7.1.0",
