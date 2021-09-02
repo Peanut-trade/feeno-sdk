@@ -27,11 +27,11 @@ export interface IFeeNo {
 export class FeeNo implements IFeeNo {
   private apiUrl = process.env.API_URL;
 
-  provider: Web3Provider;
+  provider?: Web3Provider;
 
   // TODO: Need to add provider as argument for constructor and save for sign
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor(provider: Web3Provider) {
+  constructor(provider?: Web3Provider) {
     this.provider = provider;
   }
 
@@ -84,6 +84,9 @@ export class FeeNo implements IFeeNo {
   }
 
   async sign(params: Sign): Promise<string> {
+    if (!this.provider) {
+      throw new Error('No provider specified');
+    }
     if (!this.provider.provider.request) return '';
 
     const signature = await this.provider.provider.request({

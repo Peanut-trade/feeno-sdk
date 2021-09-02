@@ -899,25 +899,33 @@ var FeeNo = /*#__PURE__*/function () {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              if (this.provider.provider.request) {
+              if (this.provider) {
                 _context2.next = 2;
+                break;
+              }
+
+              throw new Error('No provider specified');
+
+            case 2:
+              if (this.provider.provider.request) {
+                _context2.next = 4;
                 break;
               }
 
               return _context2.abrupt("return", '');
 
-            case 2:
-              _context2.next = 4;
+            case 4:
+              _context2.next = 6;
               return this.provider.provider.request({
                 method: 'eth_sign',
                 params: [params.adressFrom, ethers.utils.hexlify(params.messaage)]
               });
 
-            case 4:
+            case 6:
               signature = _context2.sent;
               return _context2.abrupt("return", signature);
 
-            case 6:
+            case 8:
             case "end":
               return _context2.stop();
           }

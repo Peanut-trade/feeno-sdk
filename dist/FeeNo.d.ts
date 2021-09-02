@@ -9,8 +9,8 @@ export interface IFeeNo {
 }
 export declare class FeeNo implements IFeeNo {
     private apiUrl;
-    provider: Web3Provider;
-    constructor(provider: Web3Provider);
+    provider?: Web3Provider;
+    constructor(provider?: Web3Provider);
     cancel(bundleId: BundleId): Promise<CancellationResponse>;
     estimate(params: Estimate): Promise<EstimationResponse>;
     getTransaction(bundleId: BundleId): Promise<TransactionResult>;
