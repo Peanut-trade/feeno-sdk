@@ -809,10 +809,10 @@ try {
 
 (function (TransactionType) {
   TransactionType["TransferType"] = "transfer";
-  TransactionType["SwapInputType"] = "swapInput";
-  TransactionType["SwapOutputType"] = "swapOutput";
-  TransactionType["SwapInputSingleType"] = "swapInputSingle";
-  TransactionType["SwapOutputSingleType"] = "swapOutputSingle";
+  TransactionType["SwapInputType"] = "exactInput";
+  TransactionType["SwapOutputType"] = "exactOutput";
+  TransactionType["SwapInputSingleType"] = "exactInputSingle";
+  TransactionType["SwapOutputSingleType"] = "exactOutputSingle";
   TransactionType["MintPositionType"] = "mintPosition";
   TransactionType["ClaimFeeType"] = "claimFee";
   TransactionType["AddLiquidityType"] = "addLiquidity";
@@ -824,7 +824,7 @@ var FeeNo = /*#__PURE__*/function () {
   // TODO: Need to add provider as argument for constructor and save for sign
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   function FeeNo() {
-    this.apiUrl = process.env.API_URL;
+    this.apiUrl = 'http://localhost:6200/v1';
   }
 
   var _proto = FeeNo.prototype;

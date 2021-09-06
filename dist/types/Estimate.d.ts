@@ -38,6 +38,11 @@ export interface Estimate {
      */
     feePayer: FeePayerType;
 }
+export interface approveRequired {
+    tokenAddress: AddressLike;
+    spender: AddressLike;
+    amount: BNLike;
+}
 /**
  *
  * @export
@@ -58,16 +63,16 @@ export interface EstimationResponse {
     id: EstimationId;
     /**
      *
-     * @type {boolean}
+     * @type {approveRequired}
      * @memberof EstimationResponse
      */
-    approveRequired?: boolean;
+    approveRequired: approveRequired[];
     /**
      *
      * @type {MarketGasPriceGwei}
      * @memberof EstimationResponse
      */
-    marketGasPriceGwei?: MarketGasPriceGwei;
+    marketGasPriceGwei: MarketGasPriceGwei;
     /**
      *
      * @type {FeePayerType}
@@ -79,7 +84,7 @@ export interface EstimationResponse {
      * @type {ExecutionSwap}
      * @memberof EstimationResponse
      */
-    executionSwap?: ExecutionSwap;
+    executionSwap: ExecutionSwap;
 }
 export interface MarketGasPriceGwei {
     baseFee: number;
@@ -102,7 +107,7 @@ export interface ExecutionSwap {
                 id: EstimationId;
                 status: EstimateStatus;
                 gasUsage: number;
-            };
+            }[];
             execute: {
                 id: EstimationId;
                 status: EstimateStatus;

@@ -74,7 +74,7 @@ export interface SubmissionResponse {
     blocksCountToResubmit?: number;
     /**
      *
-     * @type {Array<string>}
+     * @type {string[]}
      * @memberof SubmissionResponse
      */
     transactionHashes?: string[];
