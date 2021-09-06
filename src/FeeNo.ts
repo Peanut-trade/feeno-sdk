@@ -21,7 +21,7 @@ export interface IFeeNo {
   getTransaction(bundleId: BundleId): Promise<TransactionResult>;
 }
 export class FeeNo implements IFeeNo {
-  private apiUrl = process.env.API_URL;
+  private apiUrl = 'http://localhost:6200/v1';
 
   // TODO: Need to add provider as argument for constructor and save for sign
   // eslint-disable-next-line @typescript-eslint/no-empty-function
