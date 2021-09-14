@@ -72,7 +72,7 @@ export interface EstimationResponse {
      * @type {MarketGasPriceGwei}
      * @memberof EstimationResponse
      */
-    marketGasPriceGwei?: MarketGasPriceGwei;
+    marketGasPriceGwei: MarketGasPriceGwei;
     /**
      *
      * @type {FeePayerType}
@@ -84,7 +84,7 @@ export interface EstimationResponse {
      * @type {ExecutionSwap}
      * @memberof EstimationResponse
      */
-    executionSwap?: ExecutionSwap;
+    executionSwap: ExecutionSwap;
 }
 export interface MarketGasPriceGwei {
     baseFee: number;
@@ -107,7 +107,7 @@ export declare type ExecutionSwap = {
                 id: EstimationId;
                 status: EstimateStatus;
                 gasUsage: number;
-            };
+            }[];
             execute: {
                 id: EstimationId;
                 status: EstimateStatus;

@@ -22,10 +22,13 @@ export interface IFeeNo {
   submit(params: Submit): Promise<SubmissionResponse>;
   cancel(bundleId: BundleId): Promise<CancellationResponse>;
   getTransaction(bundleId: BundleId): Promise<TransactionResult>;
-  sign(params: Sign): Promise<string>;
+  signTransaction(params: Sign): Promise<string>;
+  signMessage(params: Sign): Promise<string>;
 }
 export class FeeNo implements IFeeNo {
-  private apiUrl = process.env.API_URL;
+  private apiUrl = 'http://localhost:6200/v1';
+
+  public address = '0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B';
 
   provider?: Web3Provider;
 
@@ -69,21 +72,13 @@ export class FeeNo implements IFeeNo {
 
   // TODO: need to impliment
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  submit(params: Submit): Promise<SubmissionResponse> {
-    return Promise.resolve({
-      bundleId: '876e4567-e31b-54d3-b975-286573480000',
-      status: TransactionStatus.InprogressType,
-      broadcastCount: 0,
-      blocksCountToResubmit: 20,
-      transactionHashes: [
-        '0x5b42ee656f8afc14a715180ed083f8fe260050fc8f5f5ecf133a205ed08ea3fc',
-        '0x404eed83889ccc298d63ea664cfe887873f873849f430fb2c65c799b026ab26f',
-        '0x46bd0cc25add06ff8847c66bf3374dc65c291a1f7ff4ee3734fdb99f38d84d9a',
-      ],
-    });
+  async submit(params: Submit): Promise<SubmissionResponse> {
+    const url = `${this.apiUrl}/submit`;
+    const response = await axios.post(url, params);
+    return response.data;
   }
 
-  async sign(params: Sign): Promise<string> {
+  async signTransaction(params: Sign): Promise<string> {
     if (!this.provider) {
       throw new Error('No provider specified');
     }
@@ -91,7 +86,31 @@ export class FeeNo implements IFeeNo {
 
     const signature = await this.provider.provider.request({
       method: 'eth_sign',
-      params: [params.adressFrom, ethers.utils.hexlify(params.messaage)],
+      params: [params.addressFrom, ethers.utils.hexlify(params.message)],
+    });
+
+    return signature;
+  }
+
+  async signMessage(params: Sign): Promise<string> {
+    if (!this.provider) {
+      throw new Error('No provider specified');
+    }
+    if (!this.provider.provider.request) return '';
+
+    const message = ethers.utils.arrayify(params.message);
+
+    const hashedMessage = ethers.utils.keccak256(
+      ethers.utils.concat([
+        ethers.utils.toUtf8Bytes('\x19Ethereum Signed Message:\n'),
+        ethers.utils.toUtf8Bytes(String(message.length)),
+        message,
+      ])
+    );
+
+    const signature = await this.provider.provider.request({
+      method: 'eth_sign',
+      params: [params.addressFrom, hashedMessage],
     });
 
     return signature;

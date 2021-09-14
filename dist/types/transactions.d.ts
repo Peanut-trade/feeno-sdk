@@ -1,10 +1,11 @@
 import { AddressLike, BNLike } from 'ethereumjs-util';
 export declare enum TransactionType {
     TransferType = "transfer",
-    SwapInputType = "swapInput",
-    SwapOutputType = "swapOutput",
-    SwapInputSingleType = "swapInputSingle",
-    SwapOutputSingleType = "swapOutputSingle",
+    SwapInputType = "exactInput",
+    SwapOutputType = "exactOutput",
+    SwapInputSingleType = "exactInputSingle",
+    SwapETHInputSingleType = "ETHExactInputSingle",
+    SwapOutputSingleType = "exactOutputSingle",
     MintPositionType = "mintPosition",
     ClaimFeeType = "claimFee",
     AddLiquidityType = "addLiquidity",

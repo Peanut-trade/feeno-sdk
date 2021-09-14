@@ -808,10 +808,11 @@ var TransactionType;
 
 (function (TransactionType) {
   TransactionType["TransferType"] = "transfer";
-  TransactionType["SwapInputType"] = "swapInput";
-  TransactionType["SwapOutputType"] = "swapOutput";
-  TransactionType["SwapInputSingleType"] = "swapInputSingle";
-  TransactionType["SwapOutputSingleType"] = "swapOutputSingle";
+  TransactionType["SwapInputType"] = "exactInput";
+  TransactionType["SwapOutputType"] = "exactOutput";
+  TransactionType["SwapInputSingleType"] = "exactInputSingle";
+  TransactionType["SwapETHInputSingleType"] = "ETHExactInputSingle";
+  TransactionType["SwapOutputSingleType"] = "exactOutputSingle";
   TransactionType["MintPositionType"] = "mintPosition";
   TransactionType["ClaimFeeType"] = "claimFee";
   TransactionType["AddLiquidityType"] = "addLiquidity";
@@ -823,7 +824,8 @@ var FeeNo = /*#__PURE__*/function () {
   // TODO: Need to add provider as argument for constructor and save for sign
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   function FeeNo(provider) {
-    this.apiUrl = process.env.API_URL;
+    this.apiUrl = 'http://localhost:6200/v1';
+    this.address = '0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B';
     this.provider = provider;
   }
 
@@ -882,50 +884,24 @@ var FeeNo = /*#__PURE__*/function () {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ;
 
-  _proto.submit = function submit(params) {
-    return Promise.resolve({
-      bundleId: '876e4567-e31b-54d3-b975-286573480000',
-      status: TransactionStatus.InprogressType,
-      broadcastCount: 0,
-      blocksCountToResubmit: 20,
-      transactionHashes: ['0x5b42ee656f8afc14a715180ed083f8fe260050fc8f5f5ecf133a205ed08ea3fc', '0x404eed83889ccc298d63ea664cfe887873f873849f430fb2c65c799b026ab26f', '0x46bd0cc25add06ff8847c66bf3374dc65c291a1f7ff4ee3734fdb99f38d84d9a']
-    });
-  };
-
-  _proto.sign = /*#__PURE__*/function () {
-    var _sign = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2(params) {
-      var signature;
+  _proto.submit =
+  /*#__PURE__*/
+  function () {
+    var _submit = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2(params) {
+      var url, response;
       return runtime_1.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              if (this.provider) {
-                _context2.next = 2;
-                break;
-              }
+              url = this.apiUrl + "/submit";
+              _context2.next = 3;
+              return axios.post(url, params);
 
-              throw new Error('No provider specified');
+            case 3:
+              response = _context2.sent;
+              return _context2.abrupt("return", response.data);
 
-            case 2:
-              if (this.provider.provider.request) {
-                _context2.next = 4;
-                break;
-              }
-
-              return _context2.abrupt("return", '');
-
-            case 4:
-              _context2.next = 6;
-              return this.provider.provider.request({
-                method: 'eth_sign',
-                params: [params.adressFrom, ethers.utils.hexlify(params.messaage)]
-              });
-
-            case 6:
-              signature = _context2.sent;
-              return _context2.abrupt("return", signature);
-
-            case 8:
+            case 5:
             case "end":
               return _context2.stop();
           }
@@ -933,11 +909,109 @@ var FeeNo = /*#__PURE__*/function () {
       }, _callee2, this);
     }));
 
-    function sign(_x2) {
-      return _sign.apply(this, arguments);
+    function submit(_x2) {
+      return _submit.apply(this, arguments);
     }
 
-    return sign;
+    return submit;
+  }();
+
+  _proto.signTransaction = /*#__PURE__*/function () {
+    var _signTransaction = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee3(params) {
+      var signature;
+      return runtime_1.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              if (this.provider) {
+                _context3.next = 2;
+                break;
+              }
+
+              throw new Error('No provider specified');
+
+            case 2:
+              if (this.provider.provider.request) {
+                _context3.next = 4;
+                break;
+              }
+
+              return _context3.abrupt("return", '');
+
+            case 4:
+              _context3.next = 6;
+              return this.provider.provider.request({
+                method: 'eth_sign',
+                params: [params.addressFrom, ethers.utils.hexlify(params.message)]
+              });
+
+            case 6:
+              signature = _context3.sent;
+              return _context3.abrupt("return", signature);
+
+            case 8:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3, this);
+    }));
+
+    function signTransaction(_x3) {
+      return _signTransaction.apply(this, arguments);
+    }
+
+    return signTransaction;
+  }();
+
+  _proto.signMessage = /*#__PURE__*/function () {
+    var _signMessage = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee4(params) {
+      var message, hashedMessage, signature;
+      return runtime_1.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              if (this.provider) {
+                _context4.next = 2;
+                break;
+              }
+
+              throw new Error('No provider specified');
+
+            case 2:
+              if (this.provider.provider.request) {
+                _context4.next = 4;
+                break;
+              }
+
+              return _context4.abrupt("return", '');
+
+            case 4:
+              message = ethers.utils.arrayify(params.message);
+              hashedMessage = ethers.utils.keccak256(ethers.utils.concat([ethers.utils.toUtf8Bytes('\x19Ethereum Signed Message:\n'), ethers.utils.toUtf8Bytes(String(message.length)), message]));
+              _context4.next = 8;
+              return this.provider.provider.request({
+                method: 'eth_sign',
+                params: [params.addressFrom, hashedMessage]
+              });
+
+            case 8:
+              signature = _context4.sent;
+              return _context4.abrupt("return", signature);
+
+            case 10:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4, this);
+    }));
+
+    function signMessage(_x4) {
+      return _signMessage.apply(this, arguments);
+    }
+
+    return signMessage;
   }();
 
   return FeeNo;

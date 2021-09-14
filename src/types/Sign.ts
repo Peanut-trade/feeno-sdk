@@ -11,11 +11,11 @@ export interface Sign {
    * @type {AddressLike}
    * @memberof Sign
    */
-  adressFrom: AddressLike;
+  addressFrom: AddressLike;
   /**
    * Message to sign
    * @type {string}
    * @memberof Sign
    */
-  messaage: string;
+  message: Buffer | string;
 }
