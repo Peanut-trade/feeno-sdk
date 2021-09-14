@@ -94,8 +94,8 @@ export interface MarketGasPriceGwei {
         slow: number;
     };
 }
-export interface ExecutionSwap {
-    dexSwap: {
+export declare type ExecutionSwap = {
+    [key in 'dexSwap' | 'cexSwap']: {
         ethTokenPrice: number;
         totalGasUsage: number;
         simulations: {
@@ -120,10 +120,7 @@ export interface ExecutionSwap {
             slow: MiningSpeed;
         };
     };
-    cexSwap: {
-        message: string;
-    };
-}
+};
 export interface MiningSpeed {
     ethGasFee: number;
     tokenBasedGasFee: number;

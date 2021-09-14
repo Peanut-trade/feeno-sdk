@@ -4,13 +4,14 @@ export declare enum TransactionType {
     SwapInputType = "exactInput",
     SwapOutputType = "exactOutput",
     SwapInputSingleType = "exactInputSingle",
+    SwapETHInputSingleType = "ETHExactInputSingle",
     SwapOutputSingleType = "exactOutputSingle",
     MintPositionType = "mintPosition",
     ClaimFeeType = "claimFee",
     AddLiquidityType = "addLiquidity",
     RemoveLiquidityType = "removeLiquidity"
 }
-export declare type TransactionBody = TransactionForTransfer | TransactionForExactInput | TransactionForExactOutput | TransactionForExactInputSingle | TransactionForExactOutputSingle;
+export declare type TransactionBody = TransactionForTransfer | TransactionForExactInput | TransactionForExactOutput | TransactionForExactInputSingle | TransactionForExactOutputSingle | TransactionForSwapExactTokensForTokens | TransactionForSwapTokensForExactTokens;
 export interface TransactionForTransfer {
     addressTo: AddressLike;
     amount: BNLike;
@@ -49,4 +50,18 @@ export interface TransactionForExactOutputSingle {
     amountOut: BNLike;
     amountInMaximum: BNLike;
     sqrtPriceLimitX96: BNLike;
+}
+export interface TransactionForSwapExactTokensForTokens {
+    amountIn: BNLike;
+    amountOutMin: BNLike;
+    path: AddressLike[];
+    to: AddressLike;
+    deadline: number;
+}
+export interface TransactionForSwapTokensForExactTokens {
+    amountOut: BNLike;
+    amountInMax: BNLike;
+    path: AddressLike[];
+    to: AddressLike;
+    deadline: number;
 }

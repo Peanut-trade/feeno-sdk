@@ -50,7 +50,6 @@ describe('FeeNo', () => {
       feePayer: 'receiver',
     };
     const response = await feeNo.estimate(data);
-    console.log(response);
 
     expect(response.status).toBe(true);
     expect(typeof response.id).toBe('string');
@@ -59,6 +58,7 @@ describe('FeeNo', () => {
     expect(response.feePayer).toBe('receiver' || 'sender');
     expect(response.executionSwap?.dexSwap.ethTokenPrice).toBeGreaterThan(0);
     expect(response.executionSwap?.dexSwap.totalGasUsage).toBeGreaterThan(0);
-    expect(typeof response.executionSwap?.cexSwap.message).toBe('string');
+    expect(response.executionSwap?.cexSwap.ethTokenPrice).toBeGreaterThan(0);
+    expect(response.executionSwap?.cexSwap.totalGasUsage).toBeGreaterThan(0);
   });
 });

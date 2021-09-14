@@ -17,7 +17,7 @@ export interface Submit {
    * @type {string}
    * @memberof Submit
    */
-  approvalTxRawData?: string;
+  approvalTxRawData: string[];
   /**
    * Signed message
    * @type {string}

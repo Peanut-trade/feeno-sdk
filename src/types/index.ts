@@ -4,3 +4,4 @@ export * from './Estimate';
 export * from './Submit';
 export * from './Cancel';
 export * from './TransactionResult';
+export * from './Sign';
