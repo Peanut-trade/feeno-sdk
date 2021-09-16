@@ -817,6 +817,7 @@ var TransactionType;
   TransactionType["ClaimFeeType"] = "claimFee";
   TransactionType["AddLiquidityType"] = "addLiquidity";
   TransactionType["RemoveLiquidityType"] = "removeLiquidity";
+  TransactionType["CreatePositionType"] = "createPosition";
 })(TransactionType || (TransactionType = {}));
 
 config();

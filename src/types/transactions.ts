@@ -7,10 +7,10 @@ export enum TransactionType {
   SwapInputSingleType = 'exactInputSingle',
   SwapETHInputSingleType = 'ETHExactInputSingle',
   SwapOutputSingleType = 'exactOutputSingle',
-  MintPositionType = 'mintPosition',
   ClaimFeeType = 'claimFee',
   AddLiquidityType = 'addLiquidity',
   RemoveLiquidityType = 'removeLiquidity',
+  CreatePositionType = 'createPosition',
 }
 
 export type TransactionBody =
@@ -20,7 +20,9 @@ export type TransactionBody =
   | TransactionForExactInputSingle
   | TransactionForExactOutputSingle
   | TransactionForSwapExactTokensForTokens
-  | TransactionForSwapTokensForExactTokens;
+  | TransactionForSwapTokensForExactTokens
+  | TransactionForCreatePosition
+  | TransactionForAddLiquidity;
 
 export interface TransactionForTransfer {
   addressTo: AddressLike;
@@ -80,4 +82,28 @@ export interface TransactionForSwapTokensForExactTokens {
   path: AddressLike[];
   to: AddressLike;
   deadline: number;
+}
+
+export interface TransactionForCreatePosition {
+  token0: AddressLike;
+  token1: AddressLike;
+  fee: BNLike;
+  tickLower: BNLike;
+  tickUpper: BNLike;
+  amount0Desired: BNLike;
+  amount1Desired: BNLike;
+  amount0Min: BNLike;
+  amount1Min: BNLike;
+  recipient: AddressLike;
+  deadline: BNLike;
+  sqrtPriceX96: BNLike;
+}
+
+export interface TransactionForAddLiquidity {
+  tokenId: string;
+  amount0Desired: BNLike;
+  amount1Desired: BNLike;
+  amount0Min: BNLike;
+  amount1Min: BNLike;
+  deadline: BNLike;
 }

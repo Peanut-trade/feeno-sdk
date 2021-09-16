@@ -819,6 +819,7 @@ try {
   TransactionType["ClaimFeeType"] = "claimFee";
   TransactionType["AddLiquidityType"] = "addLiquidity";
   TransactionType["RemoveLiquidityType"] = "removeLiquidity";
+  TransactionType["CreatePositionType"] = "createPosition";
 })(exports.TransactionType || (exports.TransactionType = {}));
 
 dotenv.config();
