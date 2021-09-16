@@ -6,6 +6,7 @@ export enum TransactionType {
   SwapOutputType = 'exactOutput',
   SwapInputSingleType = 'exactInputSingle',
   SwapETHInputSingleType = 'ETHExactInputSingle',
+  SwapInputETHSingleType = 'ExactInputETHSingle',
   SwapOutputSingleType = 'exactOutputSingle',
   ClaimFeeType = 'claimFee',
   AddLiquidityType = 'addLiquidity',
