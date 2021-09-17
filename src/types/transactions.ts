@@ -10,7 +10,8 @@ export enum TransactionType {
   MintPositionType = 'mintPosition',
   ClaimFeeType = 'claimFee',
   AddLiquidityType = 'addLiquidity',
-  RemoveLiquidityType = 'removeLiquidity',
+  DecreaseLiquidityType = 'decreaseLiquidity',
+  CollectType = 'collect',
 }
 
 export type TransactionBody =
@@ -20,7 +21,9 @@ export type TransactionBody =
   | TransactionForExactInputSingle
   | TransactionForExactOutputSingle
   | TransactionForSwapExactTokensForTokens
-  | TransactionForSwapTokensForExactTokens;
+  | TransactionForSwapTokensForExactTokens
+  | TransactionForDecreaseLiquidity
+  | TransactionForCollect;
 
 export interface TransactionForTransfer {
   addressTo: AddressLike;
@@ -34,6 +37,22 @@ export interface TransactionForExactInput {
   deadline: number;
   amountIn: BNLike;
   amountOutMinimum: BNLike;
+}
+
+export interface TransactionForDecreaseLiquidity {
+  recipient: AddressLike;
+  tokenId: number;
+  deadline: number;
+  amount0Min: BNLike;
+  amount1Min: BNLike;
+  liquidity: BNLike;
+}
+
+export interface TransactionForCollect {
+  recipient: AddressLike;
+  tokenId: number;
+  amount0Max: BNLike;
+  amount1Max: BNLike;
 }
 
 export interface TransactionForExactOutput {
