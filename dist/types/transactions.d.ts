@@ -8,6 +8,7 @@ export declare enum TransactionType {
     SwapInputETHSingleType = "ExactInputETHSingle",
     SwapOutputSingleType = "exactOutputSingle",
     ClaimFeeType = "claimFee",
+    CreatePositionType = "createPosition",
     IncreaseLiquidityType = "increaseLiquidity",
     DecreaseLiquidityType = "decreaseLiquidity",
     CollectType = "collect"

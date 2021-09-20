@@ -817,6 +817,7 @@ try {
   TransactionType["SwapInputETHSingleType"] = "ExactInputETHSingle";
   TransactionType["SwapOutputSingleType"] = "exactOutputSingle";
   TransactionType["ClaimFeeType"] = "claimFee";
+  TransactionType["CreatePositionType"] = "createPosition";
   TransactionType["IncreaseLiquidityType"] = "increaseLiquidity";
   TransactionType["DecreaseLiquidityType"] = "decreaseLiquidity";
   TransactionType["CollectType"] = "collect";
