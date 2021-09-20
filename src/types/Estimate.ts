@@ -44,7 +44,7 @@ export interface approveRequired {
   tokenAddress: AddressLike;
   spender: AddressLike;
   amount?: BNLike;
-  tokenId?: number;
+  tokenId?: BNLike;
 }
 
 /**

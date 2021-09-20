@@ -40,6 +40,7 @@ export interface TransactionForExactInput {
   deadline: number;
   amountIn: BNLike;
   amountOutMinimum: BNLike;
+  value: BNLike;
 }
 
 export interface TransactionForDecreaseLiquidity {
@@ -64,6 +65,7 @@ export interface TransactionForExactOutput {
   deadline: number;
   amountOut: BNLike;
   amountInMaximum: BNLike;
+  value: BNLike;
 }
 
 export interface TransactionForExactInputSingle {
@@ -86,6 +88,7 @@ export interface TransactionForExactOutputSingle {
   amountOut: BNLike;
   amountInMaximum: BNLike;
   sqrtPriceLimitX96: BNLike;
+  value: BNLike;
 }
 
 export interface TransactionForSwapExactTokensForTokens {
