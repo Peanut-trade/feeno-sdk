@@ -22,6 +22,7 @@ export type TransactionBody =
   | TransactionForExactOutputSingle
   | TransactionForSwapExactTokensForTokens
   | TransactionForSwapTokensForExactTokens
+  | TransactionForCreatePosition
   | TransactionForIncreaseLiquidity
   | TransactionForDecreaseLiquidity
   | TransactionForCollect;
@@ -113,15 +114,15 @@ export interface TransactionForCreatePosition {
   amount0Min: BNLike;
   amount1Min: BNLike;
   recipient: AddressLike;
-  deadline: BNLike;
+  deadline: number;
   sqrtPriceX96: BNLike;
 }
 
 export interface TransactionForIncreaseLiquidity {
-  tokenId: string;
+  tokenId: number;
   amount0Desired: BNLike;
   amount1Desired: BNLike;
   amount0Min: BNLike;
   amount1Min: BNLike;
-  deadline: BNLike;
+  deadline: number;
 }

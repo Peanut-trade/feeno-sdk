@@ -815,9 +815,9 @@ var TransactionType;
   TransactionType["SwapInputETHSingleType"] = "ExactInputETHSingle";
   TransactionType["SwapOutputSingleType"] = "exactOutputSingle";
   TransactionType["ClaimFeeType"] = "claimFee";
-  TransactionType["AddLiquidityType"] = "addLiquidity";
-  TransactionType["RemoveLiquidityType"] = "removeLiquidity";
-  TransactionType["CreatePositionType"] = "createPosition";
+  TransactionType["IncreaseLiquidityType"] = "increaseLiquidity";
+  TransactionType["DecreaseLiquidityType"] = "decreaseLiquidity";
+  TransactionType["CollectType"] = "collect";
 })(TransactionType || (TransactionType = {}));
 
 config();

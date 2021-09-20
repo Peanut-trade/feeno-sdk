@@ -8,11 +8,11 @@ export declare enum TransactionType {
     SwapInputETHSingleType = "ExactInputETHSingle",
     SwapOutputSingleType = "exactOutputSingle",
     ClaimFeeType = "claimFee",
-    AddLiquidityType = "addLiquidity",
-    RemoveLiquidityType = "removeLiquidity",
-    CreatePositionType = "createPosition"
+    IncreaseLiquidityType = "increaseLiquidity",
+    DecreaseLiquidityType = "decreaseLiquidity",
+    CollectType = "collect"
 }
-export declare type TransactionBody = TransactionForTransfer | TransactionForExactInput | TransactionForExactOutput | TransactionForExactInputSingle | TransactionForExactOutputSingle | TransactionForSwapExactTokensForTokens | TransactionForSwapTokensForExactTokens | TransactionForCreatePosition | TransactionForAddLiquidity;
+export declare type TransactionBody = TransactionForTransfer | TransactionForExactInput | TransactionForExactOutput | TransactionForExactInputSingle | TransactionForExactOutputSingle | TransactionForSwapExactTokensForTokens | TransactionForSwapTokensForExactTokens | TransactionForCreatePosition | TransactionForIncreaseLiquidity | TransactionForDecreaseLiquidity | TransactionForCollect;
 export interface TransactionForTransfer {
     addressTo: AddressLike;
     amount: BNLike;
@@ -24,6 +24,20 @@ export interface TransactionForExactInput {
     deadline: number;
     amountIn: BNLike;
     amountOutMinimum: BNLike;
+}
+export interface TransactionForDecreaseLiquidity {
+    recipient: AddressLike;
+    tokenId: number;
+    deadline: number;
+    amount0Min: BNLike;
+    amount1Min: BNLike;
+    liquidity: BNLike;
+}
+export interface TransactionForCollect {
+    recipient: AddressLike;
+    tokenId: number;
+    amount0Max: BNLike;
+    amount1Max: BNLike;
 }
 export interface TransactionForExactOutput {
     path: string;
@@ -77,14 +91,14 @@ export interface TransactionForCreatePosition {
     amount0Min: BNLike;
     amount1Min: BNLike;
     recipient: AddressLike;
-    deadline: BNLike;
+    deadline: number;
     sqrtPriceX96: BNLike;
 }
-export interface TransactionForAddLiquidity {
-    tokenId: string;
+export interface TransactionForIncreaseLiquidity {
+    tokenId: number;
     amount0Desired: BNLike;
     amount1Desired: BNLike;
     amount0Min: BNLike;
     amount1Min: BNLike;
-    deadline: BNLike;
+    deadline: number;
 }
