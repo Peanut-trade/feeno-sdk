@@ -106,4 +106,5 @@ export interface TransactionForIncreaseLiquidity {
     amount0Min: BNLike;
     amount1Min: BNLike;
     deadline: number;
+    value: BNLike;
 }
