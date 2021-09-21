@@ -120,6 +120,7 @@ export interface TransactionForCreatePosition {
   recipient: AddressLike;
   deadline: number;
   sqrtPriceX96: BNLike;
+  value: BNLike;
 }
 
 export interface TransactionForIncreaseLiquidity {
