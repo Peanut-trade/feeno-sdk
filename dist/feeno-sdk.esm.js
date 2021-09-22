@@ -812,11 +812,13 @@ var TransactionType;
   TransactionType["SwapOutputType"] = "exactOutput";
   TransactionType["SwapInputSingleType"] = "exactInputSingle";
   TransactionType["SwapETHInputSingleType"] = "ETHExactInputSingle";
+  TransactionType["SwapInputETHSingleType"] = "ExactInputETHSingle";
   TransactionType["SwapOutputSingleType"] = "exactOutputSingle";
-  TransactionType["MintPositionType"] = "mintPosition";
   TransactionType["ClaimFeeType"] = "claimFee";
-  TransactionType["AddLiquidityType"] = "addLiquidity";
-  TransactionType["RemoveLiquidityType"] = "removeLiquidity";
+  TransactionType["CreatePositionType"] = "createPosition";
+  TransactionType["IncreaseLiquidityType"] = "increaseLiquidity";
+  TransactionType["DecreaseLiquidityType"] = "decreaseLiquidity";
+  TransactionType["CollectType"] = "collect";
 })(TransactionType || (TransactionType = {}));
 
 config();

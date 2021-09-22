@@ -6,11 +6,13 @@ export enum TransactionType {
   SwapOutputType = 'exactOutput',
   SwapInputSingleType = 'exactInputSingle',
   SwapETHInputSingleType = 'ETHExactInputSingle',
+  SwapInputETHSingleType = 'ExactInputETHSingle',
   SwapOutputSingleType = 'exactOutputSingle',
-  MintPositionType = 'mintPosition',
   ClaimFeeType = 'claimFee',
-  AddLiquidityType = 'addLiquidity',
-  RemoveLiquidityType = 'removeLiquidity',
+  CreatePositionType = 'createPosition',
+  IncreaseLiquidityType = 'increaseLiquidity',
+  DecreaseLiquidityType = 'decreaseLiquidity',
+  CollectType = 'collect',
 }
 
 export type TransactionBody =
@@ -20,7 +22,11 @@ export type TransactionBody =
   | TransactionForExactInputSingle
   | TransactionForExactOutputSingle
   | TransactionForSwapExactTokensForTokens
-  | TransactionForSwapTokensForExactTokens;
+  | TransactionForSwapTokensForExactTokens
+  | TransactionForCreatePosition
+  | TransactionForIncreaseLiquidity
+  | TransactionForDecreaseLiquidity
+  | TransactionForCollect;
 
 export interface TransactionForTransfer {
   addressTo: AddressLike;
@@ -34,6 +40,23 @@ export interface TransactionForExactInput {
   deadline: number;
   amountIn: BNLike;
   amountOutMinimum: BNLike;
+  value: BNLike;
+}
+
+export interface TransactionForDecreaseLiquidity {
+  recipient: AddressLike;
+  tokenId: number;
+  deadline: number;
+  amount0Min: BNLike;
+  amount1Min: BNLike;
+  liquidity: BNLike;
+}
+
+export interface TransactionForCollect {
+  recipient: AddressLike;
+  tokenId: number;
+  amount0Max: BNLike;
+  amount1Max: BNLike;
 }
 
 export interface TransactionForExactOutput {
@@ -42,6 +65,7 @@ export interface TransactionForExactOutput {
   deadline: number;
   amountOut: BNLike;
   amountInMaximum: BNLike;
+  value: BNLike;
 }
 
 export interface TransactionForExactInputSingle {
@@ -64,6 +88,7 @@ export interface TransactionForExactOutputSingle {
   amountOut: BNLike;
   amountInMaximum: BNLike;
   sqrtPriceLimitX96: BNLike;
+  value: BNLike;
 }
 
 export interface TransactionForSwapExactTokensForTokens {
@@ -80,4 +105,30 @@ export interface TransactionForSwapTokensForExactTokens {
   path: AddressLike[];
   to: AddressLike;
   deadline: number;
+}
+
+export interface TransactionForCreatePosition {
+  token0: AddressLike;
+  token1: AddressLike;
+  fee: BNLike;
+  tickLower: BNLike;
+  tickUpper: BNLike;
+  amount0Desired: BNLike;
+  amount1Desired: BNLike;
+  amount0Min: BNLike;
+  amount1Min: BNLike;
+  recipient: AddressLike;
+  deadline: number;
+  sqrtPriceX96: BNLike;
+  value: BNLike;
+}
+
+export interface TransactionForIncreaseLiquidity {
+  tokenId: number;
+  amount0Desired: BNLike;
+  amount1Desired: BNLike;
+  amount0Min: BNLike;
+  amount1Min: BNLike;
+  deadline: number;
+  value: BNLike;
 }

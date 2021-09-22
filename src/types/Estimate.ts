@@ -43,7 +43,8 @@ export interface Estimate {
 export interface approveRequired {
   tokenAddress: AddressLike;
   spender: AddressLike;
-  amount: BNLike;
+  amount?: BNLike;
+  tokenId?: BNLike;
 }
 
 /**
