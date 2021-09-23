@@ -4,8 +4,6 @@ export declare enum TransactionType {
     SwapInputType = "exactInput",
     SwapOutputType = "exactOutput",
     SwapInputSingleType = "exactInputSingle",
-    SwapETHInputSingleType = "ETHExactInputSingle",
-    SwapInputETHSingleType = "ExactInputETHSingle",
     SwapOutputSingleType = "exactOutputSingle",
     ClaimFeeType = "claimFee",
     CreatePositionType = "createPosition",
