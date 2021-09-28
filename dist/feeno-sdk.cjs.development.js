@@ -819,6 +819,7 @@ try {
   TransactionType["IncreaseLiquidityType"] = "increaseLiquidity";
   TransactionType["DecreaseLiquidityType"] = "decreaseLiquidity";
   TransactionType["CollectType"] = "collect";
+  TransactionType["SwapExactTokensForTokensType"] = "swapExactTokensForTokens";
 })(exports.TransactionType || (exports.TransactionType = {}));
 
 dotenv.config();

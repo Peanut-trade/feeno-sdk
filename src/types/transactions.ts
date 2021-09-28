@@ -11,6 +11,7 @@ export enum TransactionType {
   IncreaseLiquidityType = 'increaseLiquidity',
   DecreaseLiquidityType = 'decreaseLiquidity',
   CollectType = 'collect',
+  SwapExactTokensForTokensType = 'swapExactTokensForTokens',
 }
 
 export type TransactionBody =
