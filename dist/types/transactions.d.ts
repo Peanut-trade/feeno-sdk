@@ -11,7 +11,8 @@ export declare enum TransactionType {
     DecreaseLiquidityType = "decreaseLiquidity",
     CollectType = "collect",
     SwapExactTokensForTokensType = "swapExactTokensForTokens",
-    SwapExactTokensForETHType = "swapExactTokensForETH"
+    SwapExactTokensForETHType = "swapExactTokensForETH",
+    SwapExactETHForTokensType = "swapExactETHForTokens"
 }
 export declare type TransactionBody = TransactionForTransfer | TransactionForExactInput | TransactionForExactOutput | TransactionForExactInputSingle | TransactionForExactOutputSingle | TransactionForSwapExactTokensForTokens | TransactionForSwapTokensForExactTokens | TransactionForCreatePosition | TransactionForIncreaseLiquidity | TransactionForDecreaseLiquidity | TransactionForCollect;
 export interface TransactionForTransfer {

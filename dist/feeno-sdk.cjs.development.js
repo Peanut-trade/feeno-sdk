@@ -821,6 +821,7 @@ try {
   TransactionType["CollectType"] = "collect";
   TransactionType["SwapExactTokensForTokensType"] = "swapExactTokensForTokens";
   TransactionType["SwapExactTokensForETHType"] = "swapExactTokensForETH";
+  TransactionType["SwapExactETHForTokensType"] = "swapExactETHForTokens";
 })(exports.TransactionType || (exports.TransactionType = {}));
 
 dotenv.config();
