@@ -811,8 +811,6 @@ var TransactionType;
   TransactionType["SwapInputType"] = "exactInput";
   TransactionType["SwapOutputType"] = "exactOutput";
   TransactionType["SwapInputSingleType"] = "exactInputSingle";
-  TransactionType["SwapETHInputSingleType"] = "ETHExactInputSingle";
-  TransactionType["SwapInputETHSingleType"] = "ExactInputETHSingle";
   TransactionType["SwapOutputSingleType"] = "exactOutputSingle";
   TransactionType["ClaimFeeType"] = "claimFee";
   TransactionType["CreatePositionType"] = "createPosition";
