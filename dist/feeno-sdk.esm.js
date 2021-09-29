@@ -817,6 +817,9 @@ var TransactionType;
   TransactionType["IncreaseLiquidityType"] = "increaseLiquidity";
   TransactionType["DecreaseLiquidityType"] = "decreaseLiquidity";
   TransactionType["CollectType"] = "collect";
+  TransactionType["SwapExactTokensForTokensType"] = "swapExactTokensForTokens";
+  TransactionType["SwapExactTokensForETHType"] = "swapExactTokensForETH";
+  TransactionType["SwapExactETHForTokensType"] = "swapExactETHForTokens";
 })(TransactionType || (TransactionType = {}));
 
 config();
