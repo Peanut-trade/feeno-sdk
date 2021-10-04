@@ -827,7 +827,7 @@ var FeeNo = /*#__PURE__*/function () {
   // TODO: Need to add provider as argument for constructor and save for sign
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   function FeeNo(provider) {
-    this.apiUrl = 'http://localhost:6200/v1';
+    this.apiUrl = 'https://devapi-feeno.peanut.trade/v1';
     this.address = '0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B';
     this.provider = provider;
   }

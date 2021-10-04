@@ -26,7 +26,7 @@ export interface IFeeNo {
   signMessage(params: Sign): Promise<string>;
 }
 export class FeeNo implements IFeeNo {
-  private apiUrl = 'http://localhost:6200/v1';
+  private apiUrl = 'https://devapi-feeno.peanut.trade/v1';
 
   public address = '0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B';
 
