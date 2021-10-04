@@ -48,7 +48,7 @@ export interface TransactionForExactOutput {
     deadline: number;
     amountOut: BNLike;
     amountInMaximum: BNLike;
-    value: BNLike;
+    value?: BNLike;
 }
 export interface TransactionForExactInputSingle {
     tokenIn: AddressLike;
@@ -59,6 +59,7 @@ export interface TransactionForExactInputSingle {
     amountIn: BNLike;
     amountOutMinimum: BNLike;
     sqrtPriceLimitX96: BNLike;
+    value?: BNLike;
 }
 export interface TransactionForExactOutputSingle {
     tokenIn: AddressLike;
@@ -69,7 +70,7 @@ export interface TransactionForExactOutputSingle {
     amountOut: BNLike;
     amountInMaximum: BNLike;
     sqrtPriceLimitX96: BNLike;
-    value: BNLike;
+    value?: BNLike;
 }
 export interface TransactionForSwapExactTokensForTokens {
     amountIn: BNLike;
@@ -97,8 +98,8 @@ export interface TransactionForCreatePosition {
     amount1Min: BNLike;
     recipient: AddressLike;
     deadline: number;
-    sqrtPriceX96: BNLike;
-    value: BNLike;
+    sqrtPriceX96?: BNLike;
+    value?: BNLike;
 }
 export interface TransactionForIncreaseLiquidity {
     tokenId: number;
@@ -107,5 +108,5 @@ export interface TransactionForIncreaseLiquidity {
     amount0Min: BNLike;
     amount1Min: BNLike;
     deadline: number;
-    value: BNLike;
+    value?: BNLike;
 }

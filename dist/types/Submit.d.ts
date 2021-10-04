@@ -79,3 +79,24 @@ export interface SubmissionResponse {
      */
     transactionHashes?: string[];
 }
+export declare type Speed = 'slow' | 'medium' | 'fast';
+export declare type ExType = 'dexSwap' | 'cexSwap';
+/**
+ *
+ * @export
+ * @interface RequestParams
+ */
+export interface RequestParams {
+    /**
+     *
+     * @type {ExType}
+     * @memberof RequestParams
+     */
+    exType: ExType | 'optimalSwap';
+    /**
+     *
+     * @type {Speed}
+     * @memberof RequestParams
+     */
+    speed: Speed;
+}

@@ -1,6 +1,8 @@
 import axios from 'axios';
-import { config } from 'dotenv';
+import Common, { Hardfork } from '@ethereumjs/common';
 import { ethers } from 'ethers';
+import { abi } from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json';
+import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
@@ -798,6 +800,717 @@ try {
 }
 });
 
+var network = {
+	id: 5,
+	name: "goerli",
+	explorer: "https://goerli.etherscan.io"
+};
+var apiURL = "http://localhost:6200/v1";
+var feeno = {
+	contract: "0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B"
+};
+
+var ERC20ABI = [
+	{
+		constant: true,
+		inputs: [
+		],
+		name: "name",
+		outputs: [
+			{
+				name: "",
+				type: "string"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "_spender",
+				type: "address"
+			},
+			{
+				name: "_value",
+				type: "uint256"
+			}
+		],
+		name: "approve",
+		outputs: [
+			{
+				name: "",
+				type: "bool"
+			}
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+		],
+		name: "totalSupply",
+		outputs: [
+			{
+				name: "",
+				type: "uint256"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "_from",
+				type: "address"
+			},
+			{
+				name: "_to",
+				type: "address"
+			},
+			{
+				name: "_value",
+				type: "uint256"
+			}
+		],
+		name: "transferFrom",
+		outputs: [
+			{
+				name: "",
+				type: "bool"
+			}
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+		],
+		name: "decimals",
+		outputs: [
+			{
+				name: "",
+				type: "uint8"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				name: "_owner",
+				type: "address"
+			}
+		],
+		name: "balanceOf",
+		outputs: [
+			{
+				name: "balance",
+				type: "uint256"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+		],
+		name: "symbol",
+		outputs: [
+			{
+				name: "",
+				type: "string"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "_to",
+				type: "address"
+			},
+			{
+				name: "_value",
+				type: "uint256"
+			}
+		],
+		name: "transfer",
+		outputs: [
+			{
+				name: "",
+				type: "bool"
+			}
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				name: "_owner",
+				type: "address"
+			},
+			{
+				name: "_spender",
+				type: "address"
+			}
+		],
+		name: "allowance",
+		outputs: [
+			{
+				name: "",
+				type: "uint256"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		payable: true,
+		stateMutability: "payable",
+		type: "fallback"
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				name: "owner",
+				type: "address"
+			},
+			{
+				indexed: true,
+				name: "spender",
+				type: "address"
+			},
+			{
+				indexed: false,
+				name: "value",
+				type: "uint256"
+			}
+		],
+		name: "Approval",
+		type: "event"
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				name: "from",
+				type: "address"
+			},
+			{
+				indexed: true,
+				name: "to",
+				type: "address"
+			},
+			{
+				indexed: false,
+				name: "value",
+				type: "uint256"
+			}
+		],
+		name: "Transfer",
+		type: "event"
+	}
+];
+
+var FeeNoRequest = /*#__PURE__*/function () {
+  function FeeNoRequest(estimationResponse, provider) {
+    this.estimationResponse = estimationResponse;
+    this.provider = provider;
+    this.signer = provider.getSigner();
+    this.chainId = network.id;
+    this.common = new Common({
+      chain: this.chainId,
+      hardfork: Hardfork.London
+    });
+    this.maxFeePerGas = ethers.utils.parseUnits(this.estimationResponse.marketGasPriceGwei.baseFee.toString(), 'gwei')._hex;
+    this.maxPriorityFeePerGas = ethers.utils.hexlify(ethers.BigNumber.from(0));
+  }
+
+  var _proto = FeeNoRequest.prototype;
+
+  _proto._getSwapType = function _getSwapType(sendRequest) {
+    if (sendRequest.exType === 'optimalSwap') {
+      if (this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee > this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee) {
+        return 'dexSwap';
+      }
+
+      return 'cexSwap';
+    }
+
+    return sendRequest.exType;
+  };
+
+  _proto._approveTokensUse = /*#__PURE__*/function () {
+    var _approveTokensUse2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2(exType) {
+      var _this = this;
+
+      var txsToApprove, signerAdress;
+      return runtime_1.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              txsToApprove = this.estimationResponse.approveRequired;
+              _context2.next = 3;
+              return this.signer.getAddress();
+
+            case 3:
+              signerAdress = _context2.sent;
+              return _context2.abrupt("return", Promise.all(txsToApprove.map( /*#__PURE__*/function () {
+                var _ref = _asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee(txToApprove, txIndex) {
+                  var approvalGasUsage, gasLimit, contract, amountOrId, tx, nonce, txFactory, unsignedTx, signature, signatureParts, txWithSignature;
+                  return runtime_1.wrap(function _callee$(_context) {
+                    while (1) {
+                      switch (_context.prev = _context.next) {
+                        case 0:
+                          approvalGasUsage = _this.estimationResponse.executionSwap[exType].simulations.approve[txIndex].gasUsage;
+
+                          if (txToApprove.tokenId) {
+                            contract = new ethers.Contract(txToApprove.tokenAddress.toString(), abi, _this.provider);
+                            amountOrId = txToApprove.tokenId;
+                            gasLimit = ethers.BigNumber.from(55000);
+                          } else {
+                            contract = new ethers.Contract(txToApprove.tokenAddress.toString(), ERC20ABI, _this.provider);
+                            amountOrId = txToApprove.amount;
+                            gasLimit = ethers.BigNumber.from(approvalGasUsage);
+                          }
+
+                          _context.next = 4;
+                          return contract.populateTransaction.approve(txToApprove.spender, amountOrId);
+
+                        case 4:
+                          tx = _context.sent;
+                          _context.next = 7;
+                          return _this.signer.getTransactionCount();
+
+                        case 7:
+                          _context.t0 = _context.sent;
+                          _context.t1 = txIndex;
+                          nonce = _context.t0 + _context.t1;
+                          txFactory = FeeMarketEIP1559Transaction.fromTxData({
+                            type: '0x02',
+                            chainId: ethers.utils.hexlify(_this.chainId),
+                            nonce: ethers.utils.hexlify(ethers.BigNumber.from(nonce), {
+                              hexPad: 'left'
+                            }),
+                            maxFeePerGas: _this.maxFeePerGas,
+                            maxPriorityFeePerGas: _this.maxPriorityFeePerGas,
+                            gasLimit: ethers.utils.hexlify(gasLimit, {
+                              hexPad: 'left'
+                            }),
+                            to: tx.to,
+                            value: ethers.utils.hexlify(ethers.BigNumber.from(0)),
+                            data: tx.data
+                          }, {
+                            common: _this.common
+                          });
+                          unsignedTx = txFactory.getMessageToSign();
+
+                          if (!_this.provider.provider.request) {
+                            _context.next = 18;
+                            break;
+                          }
+
+                          _context.next = 15;
+                          return _this.provider.provider.request({
+                            method: 'eth_sign',
+                            params: [signerAdress, ethers.utils.hexlify(unsignedTx)]
+                          });
+
+                        case 15:
+                          _context.t2 = _context.sent;
+                          _context.next = 19;
+                          break;
+
+                        case 18:
+                          _context.t2 = '';
+
+                        case 19:
+                          signature = _context.t2;
+                          signatureParts = ethers.utils.splitSignature(signature);
+                          txWithSignature = txFactory._processSignature(signatureParts.v, Buffer.from(ethers.utils.arrayify(signatureParts.r)), Buffer.from(ethers.utils.arrayify(signatureParts.s)));
+                          return _context.abrupt("return", ethers.utils.hexlify(txWithSignature.serialize()));
+
+                        case 23:
+                        case "end":
+                          return _context.stop();
+                      }
+                    }
+                  }, _callee);
+                }));
+
+                return function (_x2, _x3) {
+                  return _ref.apply(this, arguments);
+                };
+              }())));
+
+            case 5:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+
+    function _approveTokensUse(_x) {
+      return _approveTokensUse2.apply(this, arguments);
+    }
+
+    return _approveTokensUse;
+  }();
+
+  _proto._approveETHTransfer = /*#__PURE__*/function () {
+    var _approveETHTransfer2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee3(exType, speed, nonce) {
+      var value, signerAddress, feenoContractAddress, ETHGasFee, tx, txFactory, unsignedTx, signature, signatureParts, txWithSignature;
+      return runtime_1.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              _context3.next = 2;
+              return this.signer.getAddress();
+
+            case 2:
+              signerAddress = _context3.sent;
+              feenoContractAddress = feeno.contract;
+              ETHGasFee = (this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee * Math.pow(10, 18)).toFixed(0);
+
+              if (this.estimationResponse.ETHQuantity) {
+                value = this.estimationResponse.erc20TokenToPayFee ? ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString() : this.estimationResponse.ETHQuantity;
+              } else {
+                value = ETHGasFee;
+              }
+
+              _context3.t0 = ethers.utils.hexlify(this.chainId);
+              _context3.t1 = ethers.utils;
+              _context3.t2 = ethers.BigNumber;
+              _context3.next = 11;
+              return this.signer.getTransactionCount();
+
+            case 11:
+              _context3.t3 = _context3.sent;
+              _context3.t4 = nonce;
+              _context3.t5 = _context3.t3 + _context3.t4;
+              _context3.t6 = _context3.t2.from.call(_context3.t2, _context3.t5);
+              _context3.t7 = {
+                hexPad: 'left'
+              };
+              _context3.t8 = _context3.t1.hexlify.call(_context3.t1, _context3.t6, _context3.t7);
+              _context3.t9 = this.maxFeePerGas;
+              _context3.t10 = this.maxPriorityFeePerGas;
+              _context3.t11 = ethers.utils.hexlify(ethers.BigNumber.from(21100), {
+                hexPad: 'left'
+              });
+              _context3.t12 = signerAddress;
+              _context3.t13 = feenoContractAddress;
+              _context3.t14 = ethers.utils.hexlify(ethers.BigNumber.from(value));
+              tx = {
+                type: '0x02',
+                chainId: _context3.t0,
+                nonce: _context3.t8,
+                maxFeePerGas: _context3.t9,
+                maxPriorityFeePerGas: _context3.t10,
+                gasLimit: _context3.t11,
+                from: _context3.t12,
+                to: _context3.t13,
+                value: _context3.t14
+              };
+              txFactory = FeeMarketEIP1559Transaction.fromTxData(tx, {
+                common: this.common
+              });
+              unsignedTx = txFactory.getMessageToSign();
+
+              if (!this.provider.provider.request) {
+                _context3.next = 32;
+                break;
+              }
+
+              _context3.next = 29;
+              return this.provider.provider.request({
+                method: 'eth_sign',
+                params: [signerAddress, ethers.utils.hexlify(unsignedTx)]
+              });
+
+            case 29:
+              _context3.t15 = _context3.sent;
+              _context3.next = 33;
+              break;
+
+            case 32:
+              _context3.t15 = '';
+
+            case 33:
+              signature = _context3.t15;
+              signatureParts = ethers.utils.splitSignature(signature);
+              txWithSignature = txFactory._processSignature(signatureParts.v, Buffer.from(ethers.utils.arrayify(signatureParts.r)), Buffer.from(ethers.utils.arrayify(signatureParts.s)));
+              return _context3.abrupt("return", ethers.utils.hexlify(txWithSignature.serialize()));
+
+            case 37:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3, this);
+    }));
+
+    function _approveETHTransfer(_x4, _x5, _x6) {
+      return _approveETHTransfer2.apply(this, arguments);
+    }
+
+    return _approveETHTransfer;
+  }();
+
+  _proto._approveTransaction = /*#__PURE__*/function () {
+    var _approveTransaction2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee4(exType, speed) {
+      var signerAdress, metadataToSign, message, hashedMessage, signature;
+      return runtime_1.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              _context4.next = 2;
+              return this.signer.getAddress();
+
+            case 2:
+              signerAdress = _context4.sent;
+              metadataToSign = this.estimationResponse.executionSwap[exType].miningSpeed[speed].data.messageForSing;
+              message = ethers.utils.arrayify(metadataToSign);
+              hashedMessage = ethers.utils.keccak256(ethers.utils.concat([ethers.utils.toUtf8Bytes('\x19Ethereum Signed Message:\n'), ethers.utils.toUtf8Bytes(String(message.length)), message]));
+
+              if (!this.provider.provider.request) {
+                _context4.next = 12;
+                break;
+              }
+
+              _context4.next = 9;
+              return this.provider.provider.request({
+                method: 'eth_sign',
+                params: [signerAdress, hashedMessage]
+              });
+
+            case 9:
+              _context4.t0 = _context4.sent;
+              _context4.next = 13;
+              break;
+
+            case 12:
+              _context4.t0 = '';
+
+            case 13:
+              signature = _context4.t0;
+              return _context4.abrupt("return", signature);
+
+            case 15:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4, this);
+    }));
+
+    function _approveTransaction(_x7, _x8) {
+      return _approveTransaction2.apply(this, arguments);
+    }
+
+    return _approveTransaction;
+  }() // setup approve transactions with sign and send submit request
+  ;
+
+  _proto.send =
+  /*#__PURE__*/
+  function () {
+    var _send = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee5(sendRequest) {
+      var eXtype, approvalTxRawData, metadataSignature, txToSubmit, url, response;
+      return runtime_1.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              eXtype = this._getSwapType(sendRequest);
+              _context5.next = 3;
+              return this._approveTokensUse(eXtype);
+
+            case 3:
+              approvalTxRawData = _context5.sent;
+
+              if (!(this.estimationResponse.ETHQuantity || !this.estimationResponse.erc20TokenToPayFee)) {
+                _context5.next = 10;
+                break;
+              }
+
+              _context5.t0 = approvalTxRawData;
+              _context5.next = 8;
+              return this._approveETHTransfer(eXtype, sendRequest.speed, approvalTxRawData.length);
+
+            case 8:
+              _context5.t1 = _context5.sent;
+
+              _context5.t0.push.call(_context5.t0, _context5.t1);
+
+            case 10:
+              _context5.next = 12;
+              return this._approveTransaction(eXtype, sendRequest.speed);
+
+            case 12:
+              metadataSignature = _context5.sent;
+              txToSubmit = {
+                estimationId: this.estimationResponse.id,
+                approvalTxRawData: approvalTxRawData,
+                userSign: metadataSignature,
+                processingMode: eXtype,
+                miningSpeed: sendRequest.speed,
+                blocksCountToResubmit: 20
+              };
+              url = apiURL + "/submit";
+              _context5.next = 17;
+              return axios.post(url, txToSubmit);
+
+            case 17:
+              response = _context5.sent;
+              this.bundleId = response.data.bundleId;
+              return _context5.abrupt("return", response.data);
+
+            case 20:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5, this);
+    }));
+
+    function send(_x9) {
+      return _send.apply(this, arguments);
+    }
+
+    return send;
+  }() // cancel current request
+  ;
+
+  _proto.cancel =
+  /*#__PURE__*/
+  function () {
+    var _cancel = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee6() {
+      var url, response;
+      return runtime_1.wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              url = apiURL + "/bundle/" + this.bundleId + "/cancel";
+              _context6.next = 3;
+              return axios["delete"](url);
+
+            case 3:
+              response = _context6.sent;
+              return _context6.abrupt("return", response.data);
+
+            case 5:
+            case "end":
+              return _context6.stop();
+          }
+        }
+      }, _callee6, this);
+    }));
+
+    function cancel() {
+      return _cancel.apply(this, arguments);
+    }
+
+    return cancel;
+  }() // get status of current request
+  ;
+
+  _proto.getStatus =
+  /*#__PURE__*/
+  function () {
+    var _getStatus = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee7() {
+      var url, response;
+      return runtime_1.wrap(function _callee7$(_context7) {
+        while (1) {
+          switch (_context7.prev = _context7.next) {
+            case 0:
+              url = apiURL + "/bundle/" + this.bundleId;
+              _context7.next = 3;
+              return axios.get(url);
+
+            case 3:
+              response = _context7.sent;
+              return _context7.abrupt("return", response.data);
+
+            case 5:
+            case "end":
+              return _context7.stop();
+          }
+        }
+      }, _callee7, this);
+    }));
+
+    function getStatus() {
+      return _getStatus.apply(this, arguments);
+    }
+
+    return getStatus;
+  }();
+
+  return FeeNoRequest;
+}();
+
+var FeeNo = /*#__PURE__*/function () {
+  function FeeNo() {}
+
+  FeeNo.createFeenoRequest = /*#__PURE__*/function () {
+    var _createFeenoRequest = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee(params, provider) {
+      var url, response;
+      return runtime_1.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              url = apiURL + "/estimate";
+              _context.next = 3;
+              return axios.post(url, params);
+
+            case 3:
+              response = _context.sent;
+              return _context.abrupt("return", new FeeNoRequest(response.data, provider));
+
+            case 5:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }));
+
+    function createFeenoRequest(_x, _x2) {
+      return _createFeenoRequest.apply(this, arguments);
+    }
+
+    return createFeenoRequest;
+  }();
+
+  return FeeNo;
+}();
+
 var TransactionStatus;
 
 (function (TransactionStatus) {
@@ -822,203 +1535,5 @@ var TransactionType;
   TransactionType["SwapExactETHForTokensType"] = "swapExactETHForTokens";
 })(TransactionType || (TransactionType = {}));
 
-config();
-var FeeNo = /*#__PURE__*/function () {
-  // TODO: Need to add provider as argument for constructor and save for sign
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  function FeeNo(provider) {
-    this.apiUrl = 'http://localhost:6200/v1';
-    this.address = '0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B';
-    this.provider = provider;
-  }
-
-  var _proto = FeeNo.prototype;
-
-  _proto.cancel = function cancel(bundleId) {
-    return Promise.resolve({
-      bundleId: bundleId,
-      status: true
-    });
-  };
-
-  _proto.estimate = /*#__PURE__*/function () {
-    var _estimate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee(params) {
-      var url, response;
-      return runtime_1.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              url = this.apiUrl + "/estimate";
-              _context.next = 3;
-              return axios.post(url, params);
-
-            case 3:
-              response = _context.sent;
-              return _context.abrupt("return", response.data);
-
-            case 5:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, this);
-    }));
-
-    function estimate(_x) {
-      return _estimate.apply(this, arguments);
-    }
-
-    return estimate;
-  }() // TODO: need to impliment
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ;
-
-  _proto.getTransaction = function getTransaction(bundleId) {
-    return Promise.resolve({
-      status: TransactionStatus.InprogressType,
-      bundleId: '657e4567-e89b-12d3-a456-442266880000',
-      bloxrouteUrl: '6ghfj5-345kfg-rty4576feh',
-      transactions: ['0x613b12c803dd1c8565ee94dd86d1d772c81b46c1', '0xb344147ea92cf102cd92ec996b8986ddca4a918e', '0x5c3f649ffdbc91a247ac45fc2c4c63f9319e5135'],
-      transactionHashes: ['0x46bd0cc25add06ff8847c66bf3374dc65c291a1f7ff4ee3734fdb99f38d84d9a', '0x58aa8e4bf444463ee2cf2200b767a92f32f29ff4bfd626b25b9b5d2470ef7f02', '0x1319932d1f4ed6034c6d06c176628f9001d864555c00ecf8834b961852a50484'],
-      broadcastCount: '5000000',
-      blocksCountToResubmit: '30'
-    });
-  } // TODO: need to impliment
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ;
-
-  _proto.submit =
-  /*#__PURE__*/
-  function () {
-    var _submit = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2(params) {
-      var url, response;
-      return runtime_1.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              url = this.apiUrl + "/submit";
-              _context2.next = 3;
-              return axios.post(url, params);
-
-            case 3:
-              response = _context2.sent;
-              return _context2.abrupt("return", response.data);
-
-            case 5:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2, this);
-    }));
-
-    function submit(_x2) {
-      return _submit.apply(this, arguments);
-    }
-
-    return submit;
-  }();
-
-  _proto.signTransaction = /*#__PURE__*/function () {
-    var _signTransaction = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee3(params) {
-      var signature;
-      return runtime_1.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              if (this.provider) {
-                _context3.next = 2;
-                break;
-              }
-
-              throw new Error('No provider specified');
-
-            case 2:
-              if (this.provider.provider.request) {
-                _context3.next = 4;
-                break;
-              }
-
-              return _context3.abrupt("return", '');
-
-            case 4:
-              _context3.next = 6;
-              return this.provider.provider.request({
-                method: 'eth_sign',
-                params: [params.addressFrom, ethers.utils.hexlify(params.message)]
-              });
-
-            case 6:
-              signature = _context3.sent;
-              return _context3.abrupt("return", signature);
-
-            case 8:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3, this);
-    }));
-
-    function signTransaction(_x3) {
-      return _signTransaction.apply(this, arguments);
-    }
-
-    return signTransaction;
-  }();
-
-  _proto.signMessage = /*#__PURE__*/function () {
-    var _signMessage = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee4(params) {
-      var message, hashedMessage, signature;
-      return runtime_1.wrap(function _callee4$(_context4) {
-        while (1) {
-          switch (_context4.prev = _context4.next) {
-            case 0:
-              if (this.provider) {
-                _context4.next = 2;
-                break;
-              }
-
-              throw new Error('No provider specified');
-
-            case 2:
-              if (this.provider.provider.request) {
-                _context4.next = 4;
-                break;
-              }
-
-              return _context4.abrupt("return", '');
-
-            case 4:
-              message = ethers.utils.arrayify(params.message);
-              hashedMessage = ethers.utils.keccak256(ethers.utils.concat([ethers.utils.toUtf8Bytes('\x19Ethereum Signed Message:\n'), ethers.utils.toUtf8Bytes(String(message.length)), message]));
-              _context4.next = 8;
-              return this.provider.provider.request({
-                method: 'eth_sign',
-                params: [params.addressFrom, hashedMessage]
-              });
-
-            case 8:
-              signature = _context4.sent;
-              return _context4.abrupt("return", signature);
-
-            case 10:
-            case "end":
-              return _context4.stop();
-          }
-        }
-      }, _callee4, this);
-    }));
-
-    function signMessage(_x4) {
-      return _signMessage.apply(this, arguments);
-    }
-
-    return signMessage;
-  }();
-
-  return FeeNo;
-}();
-
-export { FeeNo, TransactionStatus, TransactionType };
+export { FeeNo, FeeNoRequest, TransactionStatus, TransactionType };
 //# sourceMappingURL=feeno-sdk.esm.js.map
