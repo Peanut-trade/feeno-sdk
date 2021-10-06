@@ -84,7 +84,10 @@ export interface SubmissionResponse {
 
 export type Speed = 'slow' | 'medium' | 'fast';
 
-export type ExType = 'dexSwap' | 'cexSwap';
+export enum ExType {
+  DEX = 'dexSwap',
+  CEX = 'cexSwap',
+}
 
 /**
  *

@@ -59,9 +59,9 @@ export class FeeNoRequest implements IFeeNoRequest {
         this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee >
         this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee
       ) {
-        return 'dexSwap';
+        return ExType.DEX;
       }
-      return 'cexSwap';
+      return ExType.CEX;
     }
     return sendRequest.exType;
   }
