@@ -1,11 +1,11 @@
 import { Web3Provider, JsonRpcSigner } from '@ethersproject/providers';
+import { AddressLike } from 'ethereumjs-util';
 import Common, { Hardfork } from '@ethereumjs/common';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { abi } from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json';
 import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
-import { AddressLike } from 'ethereumjs-util';
-import * as config from '../config/development.json';
+import * as config from '../config/default.json';
 import ERC20ABI from './abis/ERC20.json';
 import {
   EstimationResponse,
@@ -14,6 +14,7 @@ import {
   SubmissionResponse,
   ExType,
   Speed,
+  SupportedChains,
 } from './types/index';
 
 export interface IFeeNoRequest {
@@ -29,7 +30,7 @@ export class FeeNoRequest implements IFeeNoRequest {
 
   signer: JsonRpcSigner;
 
-  chainId: number;
+  chainId: SupportedChains;
 
   common: Common;
 
@@ -39,11 +40,15 @@ export class FeeNoRequest implements IFeeNoRequest {
 
   bundleId: string;
 
-  constructor(estimationResponse: EstimationResponse, provider: Web3Provider) {
+  constructor(
+    estimationResponse: EstimationResponse,
+    provider: Web3Provider,
+    chainId: SupportedChains
+  ) {
     this.estimationResponse = estimationResponse;
     this.provider = provider;
     this.signer = provider.getSigner();
-    this.chainId = config.network.id;
+    this.chainId = chainId;
     this.common = new Common({ chain: this.chainId, hardfork: Hardfork.London });
     this.maxFeePerGas = ethers.utils.parseUnits(
       this.estimationResponse.marketGasPriceGwei.baseFee.toString(),
@@ -51,6 +56,19 @@ export class FeeNoRequest implements IFeeNoRequest {
     )._hex;
     this.maxPriorityFeePerGas = ethers.utils.hexlify(ethers.BigNumber.from(0));
     this.bundleId = '0x';
+  }
+
+  private async _getSignature(signerAddress: AddressLike, hashedMessage: string): Promise<string> {
+    const signature = this.provider.provider.request
+      ? await this.provider.provider.request({
+          method: 'eth_sign',
+          params: [signerAddress, hashedMessage],
+        })
+      : '';
+
+    if (!signature) throw new Error('No signature data');
+
+    return signature;
   }
 
   private _getSwapType(sendRequest: RequestParams): ExType {
@@ -109,12 +127,7 @@ export class FeeNoRequest implements IFeeNoRequest {
         );
 
         const unsignedTx = txFactory.getMessageToSign();
-        const signature = this.provider.provider.request
-          ? await this.provider.provider.request({
-              method: 'eth_sign',
-              params: [signerAdress, ethers.utils.hexlify(unsignedTx)],
-            })
-          : '';
+        const signature = await this._getSignature(signerAdress, ethers.utils.hexlify(unsignedTx));
 
         const signatureParts = ethers.utils.splitSignature(signature);
 
@@ -132,7 +145,7 @@ export class FeeNoRequest implements IFeeNoRequest {
   private async _approveETHTransfer(exType: ExType, speed: Speed, nonce: number): Promise<string> {
     let value;
     const signerAddress: AddressLike = await this.signer.getAddress();
-    const feenoContractAddress: AddressLike = config.feeno.contract;
+    const feenoContractAddress: AddressLike = config[this.chainId].contract;
 
     const ETHGasFee = (
       this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee *
@@ -167,12 +180,7 @@ export class FeeNoRequest implements IFeeNoRequest {
     const txFactory = FeeMarketEIP1559Transaction.fromTxData(tx, { common: this.common });
 
     const unsignedTx = txFactory.getMessageToSign();
-    const signature = this.provider.provider.request
-      ? await this.provider.provider.request({
-          method: 'eth_sign',
-          params: [signerAddress, ethers.utils.hexlify(unsignedTx)],
-        })
-      : '';
+    const signature = await this._getSignature(signerAddress, ethers.utils.hexlify(unsignedTx));
 
     const signatureParts = ethers.utils.splitSignature(signature);
 
@@ -185,7 +193,7 @@ export class FeeNoRequest implements IFeeNoRequest {
     return ethers.utils.hexlify(txWithSignature.serialize());
   }
 
-  private async _approveTransaction(exType: ExType, speed: Speed): Promise<string> {
+  private async _getExecuteAllowance(exType: ExType, speed: Speed): Promise<string> {
     const signerAdress: string = await this.signer.getAddress();
     const metadataToSign =
       this.estimationResponse.executionSwap[exType].miningSpeed[speed].data.messageForSing;
@@ -200,12 +208,7 @@ export class FeeNoRequest implements IFeeNoRequest {
       ])
     );
 
-    const signature = this.provider.provider.request
-      ? await this.provider.provider.request({
-          method: 'eth_sign',
-          params: [signerAdress, hashedMessage],
-        })
-      : '';
+    const signature = await this._getSignature(signerAdress, hashedMessage);
 
     return signature;
   }
@@ -222,7 +225,7 @@ export class FeeNoRequest implements IFeeNoRequest {
       );
     }
 
-    const metadataSignature = await this._approveTransaction(eXtype, sendRequest.speed);
+    const metadataSignature = await this._getExecuteAllowance(eXtype, sendRequest.speed);
 
     const txToSubmit = {
       estimationId: this.estimationResponse.id,
@@ -233,7 +236,7 @@ export class FeeNoRequest implements IFeeNoRequest {
       blocksCountToResubmit: 20,
     };
 
-    const url = `${config.apiURL}/submit`;
+    const url = `${config[this.chainId].apiURL}/submit`;
     const response = await axios.post(url, txToSubmit);
     this.bundleId = response.data.bundleId;
     return response.data;
@@ -241,14 +244,14 @@ export class FeeNoRequest implements IFeeNoRequest {
 
   // cancel current request
   async cancel(): Promise<string> {
-    const url = `${config.apiURL}/bundle/${this.bundleId}/cancel`;
+    const url = `${config[this.chainId].apiURL}/bundle/${this.bundleId}/cancel`;
     const response = await axios.delete(url);
     return response.data;
   }
 
   // get status of current request
   async getStatus(): Promise<SubmissionResponse> {
-    const url = `${config.apiURL}/bundle/${this.bundleId}`;
+    const url = `${config[this.chainId].apiURL}/bundle/${this.bundleId}`;
     const response = await axios.get(url);
     return response.data;
   }
