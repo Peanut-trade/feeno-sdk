@@ -1,13 +1,13 @@
-import { AddressLike } from 'ethereumjs-util';
+import { AddressLike, BNLike } from 'ethereumjs-util';
 
 export interface TxData {
   type?: string;
   chainId?: string;
-  nonce?: string;
-  maxFeePerGas?: string;
-  maxPriorityFeePerGas?: string;
-  gasLimit?: string;
+  nonce?: BNLike;
+  maxFeePerGas?: BNLike;
+  maxPriorityFeePerGas?: BNLike;
+  gasLimit?: BNLike;
   to?: AddressLike | undefined;
-  value?: string;
+  value?: BNLike;
   data?: string | undefined;
 }
