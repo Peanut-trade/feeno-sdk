@@ -4,7 +4,7 @@ import Common, { Hardfork } from '@ethereumjs/common';
 import { ethers } from 'ethers';
 import { abi } from '@openzeppelin/contracts/build/contracts/ERC721.json';
 import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
-import * as config from '../config/default.json';
+import config from '../config/default.json';
 import ERC20ABI from './abis/ERC20.json';
 import {
   EstimationResponse,
