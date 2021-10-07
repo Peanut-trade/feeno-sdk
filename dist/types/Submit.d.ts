@@ -80,7 +80,10 @@ export interface SubmissionResponse {
     transactionHashes?: string[];
 }
 export declare type Speed = 'slow' | 'medium' | 'fast';
-export declare type ExType = 'dexSwap' | 'cexSwap';
+export declare enum ExType {
+    DEX = "dexSwap",
+    CEX = "cexSwap"
+}
 /**
  *
  * @export

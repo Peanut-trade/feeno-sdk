@@ -1,6 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { AddressLike } from 'ethereumjs-util';
-import * as config from '../config/default.json';
+import config from '../config/default.json';
 import { FeeNoRequest } from './FeeNoRequest';
 import { FeeNoApiRequests } from './FeeNoApiRequests';
 import { Estimate, SupportedTokens, SupportedChains } from './types';
@@ -20,8 +20,8 @@ export class FeeNo implements IFeeNo {
   FeeNoApi: FeeNoApiRequests;
 
   constructor(chainId: number) {
-    this.chainId = chainId === SupportedChains.MAINNET ? chainId : 0;
-    if (!chainId) throw new Error('Unsuported network');
+    if (!Object.values(SupportedChains).includes(chainId)) throw new Error('Unsupported network');
+    this.chainId = chainId;
     this.apiURL = config[this.chainId].apiURL;
     this.FeeNoApi = new FeeNoApiRequests(this.apiURL);
   }
