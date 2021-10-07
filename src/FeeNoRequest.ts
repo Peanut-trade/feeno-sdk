@@ -43,6 +43,19 @@ export class FeeNoRequest implements IFeeNoRequest {
 
   bundleId: string;
 
+  /**
+   * FeeNoRequests instance is being created in the FeeNo class by it's createFeenoRequest() method;
+   * After instance creation it can be used for the interaction with FeeNoApiRequest;
+   * Constructor need the estimationResponse, provider, chainId and FeeNoApiRequests class instance as the input param;
+   * @example
+   * Implementation with all params.
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const FeeNoRequestClass = feeNo.createFeenoRequest(estimateData, provider);
+   * ```
+   */
   constructor(
     estimationResponse: EstimationResponse,
     provider: Web3Provider,
@@ -232,20 +245,35 @@ export class FeeNoRequest implements IFeeNoRequest {
       blocksCountToResubmit: 20,
     };
 
-    const response = await this.FeeNoApi.submit(txToSubmit);
+    const response = await this.FeeNoApi.send(txToSubmit);
     this.bundleId = response.bundleId ? response.bundleId : this.bundleId;
     return response;
   }
+  /**
+   * Send submit transaction request using the instance's FeeNoApiRequests instance and estimation data.
+   * @param {RequestParams} sendRequest
+   * @returns {Promise<SubmissionResponse>}
+   */
 
   // cancel current request
   async cancel(): Promise<SubmissionResponse> {
     const response = await this.FeeNoApi.cancel(this.bundleId);
     return response;
   }
+  /**
+   * Send cancel request using the current instance's bundleId;
+   * bundleId is received from the send() method;
+   * @returns {Promise<SubmissionResponse>}
+   */
 
   // get status of current request
   async getStatus(): Promise<SubmissionResponse> {
     const response = await this.FeeNoApi.cancel(this.bundleId);
     return response;
   }
+  /**
+   * Send getStatus request using the current instance's bundleId;
+   * bundleId is received from the send() method;
+   * @returns {Promise<SubmissionResponse>}
+   */
 }
