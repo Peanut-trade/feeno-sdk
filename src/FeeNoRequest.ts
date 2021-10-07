@@ -245,7 +245,7 @@ export class FeeNoRequest implements IFeeNoRequest {
 
   // get status of current request
   async getStatus(): Promise<SubmissionResponse> {
-    const response = await this.FeeNoApi.cancel(this.bundleId);
+    const response = await this.FeeNoApi.getStatus(this.bundleId);
     return response;
   }
 }
