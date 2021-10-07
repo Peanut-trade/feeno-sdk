@@ -1,7 +1,6 @@
 import { Web3Provider, JsonRpcSigner } from '@ethersproject/providers';
 import { AddressLike } from 'ethereumjs-util';
 import Common, { Hardfork } from '@ethereumjs/common';
-import axios from 'axios';
 import { ethers } from 'ethers';
 import { abi } from '@openzeppelin/contracts/build/contracts/ERC721.json';
 import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
@@ -17,10 +16,11 @@ import {
   SupportedChains,
   TxData,
 } from './types/index';
+import { FeeNoApiRequests } from './FeeNoApiRequests';
 
 export interface IFeeNoRequest {
   send(sendRequest: RequestParams): Promise<SubmissionResponse>;
-  cancel(): Promise<string>;
+  cancel(): Promise<SubmissionResponse>;
   getStatus(): Promise<SubmissionResponse | string>;
 }
 
@@ -33,6 +33,8 @@ export class FeeNoRequest implements IFeeNoRequest {
 
   chainId: SupportedChains;
 
+  FeeNoApi: FeeNoApiRequests;
+
   common: Common;
 
   maxFeePerGas: string;
@@ -44,12 +46,14 @@ export class FeeNoRequest implements IFeeNoRequest {
   constructor(
     estimationResponse: EstimationResponse,
     provider: Web3Provider,
-    chainId: SupportedChains
+    chainId: SupportedChains,
+    FeeNoApi: FeeNoApiRequests
   ) {
     this.estimationResponse = estimationResponse;
     this.provider = provider;
     this.signer = provider.getSigner();
     this.chainId = chainId;
+    this.FeeNoApi = FeeNoApi;
     this.common = new Common({ chain: this.chainId, hardfork: Hardfork.London });
     this.maxFeePerGas = ethers.utils.parseUnits(
       this.estimationResponse.marketGasPriceGwei.baseFee.toString(),
@@ -228,23 +232,20 @@ export class FeeNoRequest implements IFeeNoRequest {
       blocksCountToResubmit: 20,
     };
 
-    const url = `${config[this.chainId].apiURL}/submit`;
-    const response = await axios.post(url, txToSubmit);
-    this.bundleId = response.data.bundleId;
-    return response.data;
+    const response = await this.FeeNoApi.submit(txToSubmit);
+    this.bundleId = response.bundleId ? response.bundleId : this.bundleId;
+    return response;
   }
 
   // cancel current request
-  async cancel(): Promise<string> {
-    const url = `${config[this.chainId].apiURL}/bundle/${this.bundleId}/cancel`;
-    const response = await axios.delete(url);
-    return response.data;
+  async cancel(): Promise<SubmissionResponse> {
+    const response = await this.FeeNoApi.cancel(this.bundleId);
+    return response;
   }
 
   // get status of current request
   async getStatus(): Promise<SubmissionResponse> {
-    const url = `${config[this.chainId].apiURL}/bundle/${this.bundleId}`;
-    const response = await axios.get(url);
-    return response.data;
+    const response = await this.FeeNoApi.cancel(this.bundleId);
+    return response;
   }
 }
