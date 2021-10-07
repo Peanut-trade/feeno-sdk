@@ -3,7 +3,7 @@ import { AddressLike } from 'ethereumjs-util';
 import Common, { Hardfork } from '@ethereumjs/common';
 import axios from 'axios';
 import { ethers } from 'ethers';
-import { abi } from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json';
+import { abi } from '@openzeppelin/contracts/build/contracts/ERC721.json';
 import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
 import * as config from '../config/default.json';
 import ERC20ABI from './abis/ERC20.json';
@@ -15,6 +15,7 @@ import {
   ExType,
   Speed,
   SupportedChains,
+  TxData,
 } from './types/index';
 
 export interface IFeeNoRequest {
@@ -72,22 +73,22 @@ export class FeeNoRequest implements IFeeNoRequest {
   }
 
   private _getSwapType(sendRequest: RequestParams): ExType {
-    if (sendRequest.exType === 'optimalSwap') {
-      if (
-        this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee >
-        this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee
-      ) {
-        return ExType.DEX;
-      }
-      return ExType.CEX;
+    if (sendRequest.exType !== 'optimalSwap') {
+      return sendRequest.exType;
     }
-    return sendRequest.exType;
+    if (
+      this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee <
+      this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee
+    ) {
+      return ExType.DEX;
+    }
+    return ExType.CEX;
   }
 
   private async _approveTokensUse(exType: ExType): Promise<string[]> {
     const txsToApprove: approveRequired[] = this.estimationResponse.approveRequired;
     const signerAdress: string = await this.signer.getAddress();
-
+    const ERC721Abi = abi;
     return Promise.all(
       txsToApprove.map(async (txToApprove, txIndex) => {
         const approvalGasUsage =
@@ -96,7 +97,11 @@ export class FeeNoRequest implements IFeeNoRequest {
         let contract;
         let amountOrId;
         if (txToApprove.tokenId) {
-          contract = new ethers.Contract(txToApprove.tokenAddress.toString(), abi, this.provider);
+          contract = new ethers.Contract(
+            txToApprove.tokenAddress.toString(),
+            ERC721Abi,
+            this.provider
+          );
           amountOrId = txToApprove.tokenId;
           gasLimit = ethers.BigNumber.from(55000);
         } else {
@@ -111,33 +116,18 @@ export class FeeNoRequest implements IFeeNoRequest {
         const tx = await contract.populateTransaction.approve(txToApprove.spender, amountOrId);
         const nonce = (await this.signer.getTransactionCount()) + txIndex;
 
-        const txFactory = FeeMarketEIP1559Transaction.fromTxData(
-          {
-            type: '0x02',
-            chainId: ethers.utils.hexlify(this.chainId),
-            nonce: ethers.utils.hexlify(ethers.BigNumber.from(nonce), { hexPad: 'left' }),
-            maxFeePerGas: this.maxFeePerGas,
-            maxPriorityFeePerGas: this.maxPriorityFeePerGas,
-            gasLimit: ethers.utils.hexlify(gasLimit, { hexPad: 'left' }),
-            to: tx.to,
-            value: ethers.utils.hexlify(ethers.BigNumber.from(0)),
-            data: tx.data,
-          },
-          { common: this.common }
-        );
-
-        const unsignedTx = txFactory.getMessageToSign();
-        const signature = await this._getSignature(signerAdress, ethers.utils.hexlify(unsignedTx));
-
-        const signatureParts = ethers.utils.splitSignature(signature);
-
-        const txWithSignature = txFactory._processSignature(
-          signatureParts.v,
-          Buffer.from(ethers.utils.arrayify(signatureParts.r)),
-          Buffer.from(ethers.utils.arrayify(signatureParts.s))
-        );
-
-        return ethers.utils.hexlify(txWithSignature.serialize());
+        const txData = {
+          type: '0x02',
+          chainId: ethers.utils.hexlify(this.chainId),
+          nonce: ethers.utils.hexlify(ethers.BigNumber.from(nonce), { hexPad: 'left' }),
+          maxFeePerGas: this.maxFeePerGas,
+          maxPriorityFeePerGas: this.maxPriorityFeePerGas,
+          gasLimit: ethers.utils.hexlify(gasLimit, { hexPad: 'left' }),
+          to: tx.to,
+          value: ethers.utils.hexlify(ethers.BigNumber.from(0)),
+          data: tx.data,
+        };
+        return this._signTransfer(txData, signerAdress);
       })
     );
   }
@@ -145,7 +135,7 @@ export class FeeNoRequest implements IFeeNoRequest {
   private async _approveETHTransfer(exType: ExType, speed: Speed, nonce: number): Promise<string> {
     let value;
     const signerAddress: AddressLike = await this.signer.getAddress();
-    const feenoContractAddress: AddressLike = config[this.chainId].contract;
+    const feenoContractAddress: AddressLike = config[this.chainId].FeeNoContract;
 
     const ETHGasFee = (
       this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee *
@@ -176,9 +166,11 @@ export class FeeNoRequest implements IFeeNoRequest {
       to: feenoContractAddress,
       value: ethers.utils.hexlify(ethers.BigNumber.from(value)),
     };
+    return this._signTransfer(tx, signerAddress);
+  }
 
+  private async _signTransfer(tx: TxData, signerAddress: AddressLike): Promise<string> {
     const txFactory = FeeMarketEIP1559Transaction.fromTxData(tx, { common: this.common });
-
     const unsignedTx = txFactory.getMessageToSign();
     const signature = await this._getSignature(signerAddress, ethers.utils.hexlify(unsignedTx));
 
