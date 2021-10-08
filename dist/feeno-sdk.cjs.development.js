@@ -818,11 +818,6 @@ var config = {
 }
 };
 
-var config$1 = {
-  __proto__: null,
-  'default': config
-};
-
 var ERC20ABI = [
 	{
 		constant: true,
@@ -1268,7 +1263,7 @@ var FeeNoRequest = /*#__PURE__*/function () {
 
             case 2:
               signerAddress = _context4.sent;
-              feenoContractAddress = config$1[this.chainId].FeeNoContract;
+              feenoContractAddress = config[this.chainId].FeeNoContract;
               ETHGasFee = (this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee * Math.pow(10, 18)).toFixed(0);
 
               if (this.estimationResponse.ETHQuantity) {
@@ -1511,7 +1506,7 @@ var FeeNoRequest = /*#__PURE__*/function () {
           switch (_context9.prev = _context9.next) {
             case 0:
               _context9.next = 2;
-              return this.FeeNoApi.cancel(this.bundleId);
+              return this.FeeNoApi.getStatus(this.bundleId);
 
             case 2:
               response = _context9.sent;

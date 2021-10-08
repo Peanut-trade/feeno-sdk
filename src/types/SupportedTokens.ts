@@ -1,5 +1,5 @@
 interface TokenInfo {
-  sybmol: string;
+  symbol: string;
   preEstimate: any;
 }
 export interface SupportedTokens {
