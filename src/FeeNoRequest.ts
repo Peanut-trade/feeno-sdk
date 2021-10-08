@@ -44,16 +44,14 @@ export class FeeNoRequest implements IFeeNoRequest {
   bundleId: string;
 
   /**
-   * FeeNoRequests instance is being created in the FeeNo class by it's createFeenoRequest() method;
-   * After instance creation it can be used for the interaction with FeeNoApiRequest;
-   * Constructor need the estimationResponse, provider, chainId and FeeNoApiRequests class instance as the input param;
+   * FeeNoRequests instance is being created in the FeeNo class by it's createFeenoRequest() method.
    * @example
    * Implementation with all params.
    * ```typescript
    * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
    *
-   * const feeNo = new FeeNo( 1 );
-   * const FeeNoRequestClass = feeNo.createFeenoRequest(estimateData, provider);
+   * const feeNo = new FeeNo();
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
    * ```
    */
   constructor(
@@ -222,7 +220,20 @@ export class FeeNoRequest implements IFeeNoRequest {
     return signature;
   }
 
-  // setup approve transactions with sign and send submit request
+  /**
+   * Send submit transaction.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * // If submit is successful you will get SubmissionResponse typed response.
+   * const submitResponce = FeeNoRequestInstance.send(sendRequest);
+   * ```
+   * @param {RequestParams} sendRequest
+   * @returns {Promise<SubmissionResponse>}
+   */
   async send(sendRequest: RequestParams): Promise<SubmissionResponse> {
     const eXtype = this._getSwapType(sendRequest);
 
@@ -249,31 +260,49 @@ export class FeeNoRequest implements IFeeNoRequest {
     this.bundleId = response.bundleId ? response.bundleId : this.bundleId;
     return response;
   }
+
   /**
-   * Send submit transaction request using the instance's FeeNoApiRequests instance and estimation data.
-   * @param {RequestParams} sendRequest
+   * Cancel submit request if it's not mined yet.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * // errorMessage: "Transaction not found"
+   * const cancelRequest1 = feeNoRequest.cancel();
+   *
+   * const submitResponce = feeNoRequest.send(sendRequest);
+   * // Transaction will be canceled. You will get SubmissionResponse type response.
+   * const cancelRequest2 = feeNoRequest.cancel();
+   *
+   * // Transaction is canceled already. You will get the same response as from cancelRequest2.
+   * const cancelRequest3 = feeNoRequest.cancel();
+   * ```
    * @returns {Promise<SubmissionResponse>}
    */
-
-  // cancel current request
   async cancel(): Promise<SubmissionResponse> {
-    const response = await this.FeeNoApi.cancel(this.bundleId);
-    return response;
+    return this.FeeNoApi.cancel(this.bundleId);
   }
-  /**
-   * Send cancel request using the current instance's bundleId;
-   * bundleId is received from the send() method;
-   * @returns {Promise<SubmissionResponse>}
-   */
 
-  // get status of current request
-  async getStatus(): Promise<SubmissionResponse> {
-    const response = await this.FeeNoApi.getStatus(this.bundleId);
-    return response;
-  }
   /**
-   * Send getStatus request using the current instance's bundleId;
-   * bundleId is received from the send() method;
+   * Get the transaction status.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest= feeNo.createFeenoRequest(estimateData, provider);
+   * // errorMessage: "Please, send transaction first"
+   * const cancelRequest1 = feeNoRequest.status();
+   *
+   * const submitResponce = feeNoRequest.send(sendRequest);
+   * // You will get SubmissionResponse type response
+   * const cancelRequest2 = feeNoRequest.status();
+   * ```
    * @returns {Promise<SubmissionResponse>}
    */
+  async getStatus(): Promise<SubmissionResponse> {
+    return this.FeeNoApi.getStatus(this.bundleId);
+  }
 }
