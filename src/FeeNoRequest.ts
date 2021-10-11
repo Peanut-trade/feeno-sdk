@@ -43,6 +43,17 @@ export class FeeNoRequest implements IFeeNoRequest {
 
   bundleId: string;
 
+  /**
+   * FeeNoRequests instance is being created in the FeeNo class by it's createFeenoRequest() method.
+   * @example
+   * Implementation with all params.
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo();
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * ```
+   */
   constructor(
     estimationResponse: EstimationResponse,
     provider: Web3Provider,
@@ -209,7 +220,20 @@ export class FeeNoRequest implements IFeeNoRequest {
     return signature;
   }
 
-  // setup approve transactions with sign and send submit request
+  /**
+   * Send submit transaction.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * // If submit is successful you will get SubmissionResponse typed response.
+   * const submitResponce = FeeNoRequestInstance.send(sendRequest);
+   * ```
+   * @param {RequestParams} sendRequest
+   * @returns {Promise<SubmissionResponse>}
+   */
   async send(sendRequest: RequestParams): Promise<SubmissionResponse> {
     const eXtype = this._getSwapType(sendRequest);
 
@@ -232,20 +256,53 @@ export class FeeNoRequest implements IFeeNoRequest {
       blocksCountToResubmit: 20,
     };
 
-    const response = await this.FeeNoApi.submit(txToSubmit);
+    const response = await this.FeeNoApi.send(txToSubmit);
     this.bundleId = response.bundleId ? response.bundleId : this.bundleId;
     return response;
   }
 
-  // cancel current request
+  /**
+   * Cancel submit request if it's not mined yet.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * // errorMessage: "Transaction not found"
+   * const cancelRequest1 = feeNoRequest.cancel();
+   *
+   * const submitResponce = feeNoRequest.send(sendRequest);
+   * // Transaction will be canceled. You will get SubmissionResponse type response.
+   * const cancelRequest2 = feeNoRequest.cancel();
+   *
+   * // Transaction is canceled already. You will get the same response as from cancelRequest2.
+   * const cancelRequest3 = feeNoRequest.cancel();
+   * ```
+   * @returns {Promise<SubmissionResponse>}
+   */
   async cancel(): Promise<SubmissionResponse> {
-    const response = await this.FeeNoApi.cancel(this.bundleId);
-    return response;
+    return this.FeeNoApi.cancel(this.bundleId);
   }
 
-  // get status of current request
+  /**
+   * Get the transaction status.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest= feeNo.createFeenoRequest(estimateData, provider);
+   * // errorMessage: "Please, send transaction first"
+   * const cancelRequest1 = feeNoRequest.status();
+   *
+   * const submitResponce = feeNoRequest.send(sendRequest);
+   * // You will get SubmissionResponse type response
+   * const cancelRequest2 = feeNoRequest.status();
+   * ```
+   * @returns {Promise<SubmissionResponse>}
+   */
   async getStatus(): Promise<SubmissionResponse> {
-    const response = await this.FeeNoApi.getStatus(this.bundleId);
-    return response;
+    return this.FeeNoApi.getStatus(this.bundleId);
   }
 }
