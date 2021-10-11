@@ -809,8 +809,8 @@ try {
 
 var config = {
 	"1": {
-	apiURL: "",
-	FeeNoContract: ""
+	apiURL: "http://localhost:6200/v1",
+	FeeNoContract: "0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B"
 },
 	"5": {
 	apiURL: "http://localhost:6200/v1",
