@@ -809,11 +809,11 @@ try {
 
 var config = {
 	"1": {
-	apiURL: "http://localhost:6200/v1",
+	apiURL: "https://api-feeno.peanut.trade/v1",
 	FeeNoContract: "0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B"
 },
 	"5": {
-	apiURL: "http://localhost:6200/v1",
+	apiURL: "https://devapi-feeno.peanut.trade/v1",
 	FeeNoContract: "0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B"
 }
 };
@@ -1076,6 +1076,17 @@ var ERC20ABI = [
 })(exports.SupportedChains || (exports.SupportedChains = {}));
 
 var FeeNoRequest = /*#__PURE__*/function () {
+  /**
+   * FeeNoRequests instance is being created in the FeeNo class by it's createFeenoRequest() method.
+   * @example
+   * Implementation with all params.
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo();
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * ```
+   */
   function FeeNoRequest(estimationResponse, provider, chainId, FeeNoApi) {
     this.estimationResponse = estimationResponse;
     this.provider = provider;
@@ -1152,7 +1163,7 @@ var FeeNoRequest = /*#__PURE__*/function () {
       return sendRequest.exType;
     }
 
-    if (this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee < this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee) {
+    if (!this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee || this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee < this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee) {
       return exports.ExType.DEX;
     }
 
@@ -1393,7 +1404,21 @@ var FeeNoRequest = /*#__PURE__*/function () {
     }
 
     return _getExecuteAllowance;
-  }() // setup approve transactions with sign and send submit request
+  }()
+  /**
+   * Send submit transaction.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * // If submit is successful you will get SubmissionResponse typed response.
+   * const submitResponce = FeeNoRequestInstance.send(sendRequest);
+   * ```
+   * @param {RequestParams} sendRequest
+   * @returns {Promise<SubmissionResponse>}
+   */
   ;
 
   _proto.send =
@@ -1441,7 +1466,7 @@ var FeeNoRequest = /*#__PURE__*/function () {
                 blocksCountToResubmit: 20
               };
               _context7.next = 16;
-              return this.FeeNoApi.submit(txToSubmit);
+              return this.FeeNoApi.send(txToSubmit);
 
             case 16:
               response = _context7.sent;
@@ -1461,26 +1486,40 @@ var FeeNoRequest = /*#__PURE__*/function () {
     }
 
     return send;
-  }() // cancel current request
+  }()
+  /**
+   * Cancel submit request if it's not mined yet.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * // errorMessage: "Transaction not found"
+   * const cancelRequest1 = feeNoRequest.cancel();
+   *
+   * const submitResponce = feeNoRequest.send(sendRequest);
+   * // Transaction will be canceled. You will get SubmissionResponse type response.
+   * const cancelRequest2 = feeNoRequest.cancel();
+   *
+   * // Transaction is canceled already. You will get the same response as from cancelRequest2.
+   * const cancelRequest3 = feeNoRequest.cancel();
+   * ```
+   * @returns {Promise<SubmissionResponse>}
+   */
   ;
 
   _proto.cancel =
   /*#__PURE__*/
   function () {
     var _cancel = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee8() {
-      var response;
       return runtime_1.wrap(function _callee8$(_context8) {
         while (1) {
           switch (_context8.prev = _context8.next) {
             case 0:
-              _context8.next = 2;
-              return this.FeeNoApi.cancel(this.bundleId);
+              return _context8.abrupt("return", this.FeeNoApi.cancel(this.bundleId));
 
-            case 2:
-              response = _context8.sent;
-              return _context8.abrupt("return", response);
-
-            case 4:
+            case 1:
             case "end":
               return _context8.stop();
           }
@@ -1493,26 +1532,37 @@ var FeeNoRequest = /*#__PURE__*/function () {
     }
 
     return cancel;
-  }() // get status of current request
+  }()
+  /**
+   * Get the transaction status.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest= feeNo.createFeenoRequest(estimateData, provider);
+   * // errorMessage: "Please, send transaction first"
+   * const cancelRequest1 = feeNoRequest.status();
+   *
+   * const submitResponce = feeNoRequest.send(sendRequest);
+   * // You will get SubmissionResponse type response
+   * const cancelRequest2 = feeNoRequest.status();
+   * ```
+   * @returns {Promise<SubmissionResponse>}
+   */
   ;
 
   _proto.getStatus =
   /*#__PURE__*/
   function () {
     var _getStatus = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee9() {
-      var response;
       return runtime_1.wrap(function _callee9$(_context9) {
         while (1) {
           switch (_context9.prev = _context9.next) {
             case 0:
-              _context9.next = 2;
-              return this.FeeNoApi.getStatus(this.bundleId);
+              return _context9.abrupt("return", this.FeeNoApi.getStatus(this.bundleId));
 
-            case 2:
-              response = _context9.sent;
-              return _context9.abrupt("return", response);
-
-            case 4:
+            case 1:
             case "end":
               return _context9.stop();
           }
@@ -1531,13 +1581,24 @@ var FeeNoRequest = /*#__PURE__*/function () {
 }();
 
 var FeeNoApiRequests = /*#__PURE__*/function () {
+  /**
+   * FeeNoApiRequests instance is being created by the FeeNo class constructor.
+   * Constructor need the apiUrl as the input param.
+   */
   function FeeNoApiRequests(apiUrl) {
     this.apiUrl = apiUrl;
   }
+  /**
+   * Send request for a list of the supported tokens to pay fee to Api.
+   * @returns {Promise<SupportedTokens>}
+   */
+
 
   var _proto = FeeNoApiRequests.prototype;
 
-  _proto.getTokens = /*#__PURE__*/function () {
+  _proto.getTokens =
+  /*#__PURE__*/
+  function () {
     var _getTokens = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee() {
       var url, response;
       return runtime_1.wrap(function _callee$(_context) {
@@ -1565,9 +1626,17 @@ var FeeNoApiRequests = /*#__PURE__*/function () {
     }
 
     return getTokens;
-  }();
+  }()
+  /**
+   * Send estimation request to Api.
+   * @param {Estimate} requestParams
+   * @returns {Promise<FeeNoRequest>}
+   */
+  ;
 
-  _proto.createFeenoRequest = /*#__PURE__*/function () {
+  _proto.createFeenoRequest =
+  /*#__PURE__*/
+  function () {
     var _createFeenoRequest = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2(requestParams) {
       var url, response;
       return runtime_1.wrap(function _callee2$(_context2) {
@@ -1595,10 +1664,18 @@ var FeeNoApiRequests = /*#__PURE__*/function () {
     }
 
     return createFeenoRequest;
-  }();
+  }()
+  /**
+   * Send submit request to Api.
+   * @param {Submit} txToSubmit
+   * @returns {Promise<SubmissionResponse>}
+   */
+  ;
 
-  _proto.submit = /*#__PURE__*/function () {
-    var _submit = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee3(txToSubmit) {
+  _proto.send =
+  /*#__PURE__*/
+  function () {
+    var _send = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee3(txToSubmit) {
       var url, response;
       return runtime_1.wrap(function _callee3$(_context3) {
         while (1) {
@@ -1620,14 +1697,22 @@ var FeeNoApiRequests = /*#__PURE__*/function () {
       }, _callee3, this);
     }));
 
-    function submit(_x2) {
-      return _submit.apply(this, arguments);
+    function send(_x2) {
+      return _send.apply(this, arguments);
     }
 
-    return submit;
-  }();
+    return send;
+  }()
+  /**
+   * Send getStatus request to Api.
+   * @param {string} bundleId
+   * @returns {Promise<SubmissionResponse>}
+   */
+  ;
 
-  _proto.getStatus = /*#__PURE__*/function () {
+  _proto.getStatus =
+  /*#__PURE__*/
+  function () {
     var _getStatus = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee4(bundleId) {
       var url, response;
       return runtime_1.wrap(function _callee4$(_context4) {
@@ -1655,9 +1740,17 @@ var FeeNoApiRequests = /*#__PURE__*/function () {
     }
 
     return getStatus;
-  }();
+  }()
+  /**
+   * Send cancel request to Api.
+   * @param {string} bundleId
+   * @returns {Promise<SubmissionResponse>}
+   */
+  ;
 
-  _proto.cancel = /*#__PURE__*/function () {
+  _proto.cancel =
+  /*#__PURE__*/
+  function () {
     var _cancel = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee5(bundleId) {
       var url, response;
       return runtime_1.wrap(function _callee5$(_context5) {
@@ -1691,16 +1784,47 @@ var FeeNoApiRequests = /*#__PURE__*/function () {
 }();
 
 var FeeNo = /*#__PURE__*/function () {
+  /**
+   * Constructor need the chainId as the input params(for example, Goerli testnet chainId is 5).
+   ** Default chainId is 1(MainNet).
+   * @example
+   * Implementation with all params.
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new RemmeRest(5);
+   * ```
+   */
   function FeeNo(chainId) {
+    if (chainId === void 0) {
+      chainId = 1;
+    }
+
     if (!Object.values(exports.SupportedChains).includes(chainId)) throw new Error('Unsupported network');
     this.chainId = chainId;
     this.apiURL = config[this.chainId].apiURL;
     this.FeeNoApi = new FeeNoApiRequests(this.apiURL);
   }
+  /**
+   * Make and send estimate request with given estimation data and user's provider.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new RemmeRest();
+   * const FeeNoRequest = feeNo.createFeenoRequest(estimateParams, provider);
+   * ```
+   * @param {Estimate} params
+   * @param {Web3Provider} provider
+   * @returns {Promise<FeeNoRequest>}
+   */
+
 
   var _proto = FeeNo.prototype;
 
-  _proto.createFeenoRequest = /*#__PURE__*/function () {
+  _proto.createFeenoRequest =
+  /*#__PURE__*/
+  function () {
     var _createFeenoRequest = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee(params, provider) {
       var response;
       return runtime_1.wrap(function _callee$(_context) {
@@ -1727,9 +1851,23 @@ var FeeNo = /*#__PURE__*/function () {
     }
 
     return createFeenoRequest;
-  }();
+  }()
+  /**
+   * Returns the object of supported tokens to pay fee.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new RemmeRest();
+   * const supportedTokens = feeNo.getTokens();
+   * ```
+   * @returns {Promise<SupportedTokens>}
+   */
+  ;
 
-  _proto.getTokens = /*#__PURE__*/function () {
+  _proto.getTokens =
+  /*#__PURE__*/
+  function () {
     var _getTokens = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2() {
       var response;
       return runtime_1.wrap(function _callee2$(_context2) {
