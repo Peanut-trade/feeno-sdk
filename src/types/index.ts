@@ -5,3 +5,6 @@ export * from './Submit';
 export * from './Cancel';
 export * from './TransactionResult';
 export * from './Sign';
+export * from './SupportedTokens';
+export * from './SupportedChains';
+export * from './TxData';

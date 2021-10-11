@@ -30,7 +30,7 @@ export interface Estimate {
      * @type {AddressLike}
      * @memberof Estimate
      */
-    erc20TokenToPayFee: AddressLike;
+    erc20TokenToPayFee?: AddressLike;
     /**
      * Fee payer: receiver or sender
      * @type {FeePayerType}
@@ -86,6 +86,18 @@ export interface EstimationResponse {
      * @memberof EstimationResponse
      */
     executionSwap: ExecutionSwap;
+    /**
+     *
+     * @type {ETHQuantity}
+     * @memberof EstimationResponse
+     */
+    ETHQuantity?: BNLike;
+    /**
+     * Token to spend in order to cover network fee
+     * @type {AddressLike}
+     * @memberof Estimate
+     */
+    erc20TokenToPayFee?: AddressLike;
 }
 export interface MarketGasPriceGwei {
     baseFee: number;

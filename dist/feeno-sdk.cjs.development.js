@@ -4,9 +4,12 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var axios = _interopDefault(require('axios'));
-var dotenv = require('dotenv');
+var Common = require('@ethereumjs/common');
+var Common__default = _interopDefault(Common);
 var ethers = require('ethers');
+var ERC721_json = require('@openzeppelin/contracts/build/contracts/ERC721.json');
+var tx = require('@ethereumjs/tx');
+var axios = _interopDefault(require('axios'));
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
@@ -804,6 +807,244 @@ try {
 }
 });
 
+var config = {
+	"1": {
+	apiURL: "https://api-feeno.peanut.trade/v1",
+	FeeNoContract: "0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B"
+},
+	"5": {
+	apiURL: "https://devapi-feeno.peanut.trade/v1",
+	FeeNoContract: "0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B"
+}
+};
+
+var ERC20ABI = [
+	{
+		constant: true,
+		inputs: [
+		],
+		name: "name",
+		outputs: [
+			{
+				name: "",
+				type: "string"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "_spender",
+				type: "address"
+			},
+			{
+				name: "_value",
+				type: "uint256"
+			}
+		],
+		name: "approve",
+		outputs: [
+			{
+				name: "",
+				type: "bool"
+			}
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+		],
+		name: "totalSupply",
+		outputs: [
+			{
+				name: "",
+				type: "uint256"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "_from",
+				type: "address"
+			},
+			{
+				name: "_to",
+				type: "address"
+			},
+			{
+				name: "_value",
+				type: "uint256"
+			}
+		],
+		name: "transferFrom",
+		outputs: [
+			{
+				name: "",
+				type: "bool"
+			}
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+		],
+		name: "decimals",
+		outputs: [
+			{
+				name: "",
+				type: "uint8"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				name: "_owner",
+				type: "address"
+			}
+		],
+		name: "balanceOf",
+		outputs: [
+			{
+				name: "balance",
+				type: "uint256"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+		],
+		name: "symbol",
+		outputs: [
+			{
+				name: "",
+				type: "string"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "_to",
+				type: "address"
+			},
+			{
+				name: "_value",
+				type: "uint256"
+			}
+		],
+		name: "transfer",
+		outputs: [
+			{
+				name: "",
+				type: "bool"
+			}
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				name: "_owner",
+				type: "address"
+			},
+			{
+				name: "_spender",
+				type: "address"
+			}
+		],
+		name: "allowance",
+		outputs: [
+			{
+				name: "",
+				type: "uint256"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		payable: true,
+		stateMutability: "payable",
+		type: "fallback"
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				name: "owner",
+				type: "address"
+			},
+			{
+				indexed: true,
+				name: "spender",
+				type: "address"
+			},
+			{
+				indexed: false,
+				name: "value",
+				type: "uint256"
+			}
+		],
+		name: "Approval",
+		type: "event"
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				name: "from",
+				type: "address"
+			},
+			{
+				indexed: true,
+				name: "to",
+				type: "address"
+			},
+			{
+				indexed: false,
+				name: "value",
+				type: "uint256"
+			}
+		],
+		name: "Transfer",
+		type: "event"
+	}
+];
+
 (function (TransactionStatus) {
   TransactionStatus["InprogressType"] = "inProgress";
 })(exports.TransactionStatus || (exports.TransactionStatus = {}));
@@ -824,39 +1065,553 @@ try {
   TransactionType["SwapExactETHForTokensType"] = "swapExactETHForTokens";
 })(exports.TransactionType || (exports.TransactionType = {}));
 
-dotenv.config();
-var FeeNo = /*#__PURE__*/function () {
-  // TODO: Need to add provider as argument for constructor and save for sign
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  function FeeNo(provider) {
-    this.apiUrl = 'https://devapi-feeno.peanut.trade/v1';
-    this.address = '0xFee1708400f01f2Bb8848Ef397C1a2F4C25c910B';
+(function (ExType) {
+  ExType["DEX"] = "dexSwap";
+  ExType["CEX"] = "cexSwap";
+})(exports.ExType || (exports.ExType = {}));
+
+(function (SupportedChains) {
+  SupportedChains[SupportedChains["MAINNET"] = 1] = "MAINNET";
+  SupportedChains[SupportedChains["GOERLI"] = 5] = "GOERLI";
+})(exports.SupportedChains || (exports.SupportedChains = {}));
+
+var FeeNoRequest = /*#__PURE__*/function () {
+  /**
+   * FeeNoRequests instance is being created in the FeeNo class by it's createFeenoRequest() method.
+   * @example
+   * Implementation with all params.
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo();
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * ```
+   */
+  function FeeNoRequest(estimationResponse, provider, chainId, FeeNoApi) {
+    this.estimationResponse = estimationResponse;
     this.provider = provider;
+    this.signer = provider.getSigner();
+    this.chainId = chainId;
+    this.FeeNoApi = FeeNoApi;
+    this.common = new Common__default({
+      chain: this.chainId,
+      hardfork: Common.Hardfork.London
+    });
+    this.maxFeePerGas = ethers.ethers.utils.parseUnits(this.estimationResponse.marketGasPriceGwei.baseFee.toString(), 'gwei')._hex;
+    this.maxPriorityFeePerGas = ethers.ethers.utils.hexlify(ethers.ethers.BigNumber.from(0));
+    this.bundleId = '0x';
   }
 
-  var _proto = FeeNo.prototype;
+  var _proto = FeeNoRequest.prototype;
 
-  _proto.cancel = function cancel(bundleId) {
-    return Promise.resolve({
-      bundleId: bundleId,
-      status: true
-    });
+  _proto._getSignature = /*#__PURE__*/function () {
+    var _getSignature2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee(signerAddress, hashedMessage) {
+      var signature;
+      return runtime_1.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (!this.provider.provider.request) {
+                _context.next = 6;
+                break;
+              }
+
+              _context.next = 3;
+              return this.provider.provider.request({
+                method: 'eth_sign',
+                params: [signerAddress, hashedMessage]
+              });
+
+            case 3:
+              _context.t0 = _context.sent;
+              _context.next = 7;
+              break;
+
+            case 6:
+              _context.t0 = '';
+
+            case 7:
+              signature = _context.t0;
+
+              if (signature) {
+                _context.next = 10;
+                break;
+              }
+
+              throw new Error('No signature data');
+
+            case 10:
+              return _context.abrupt("return", signature);
+
+            case 11:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function _getSignature(_x, _x2) {
+      return _getSignature2.apply(this, arguments);
+    }
+
+    return _getSignature;
+  }();
+
+  _proto._getSwapType = function _getSwapType(sendRequest) {
+    if (sendRequest.exType !== 'optimalSwap') {
+      return sendRequest.exType;
+    }
+
+    if (!this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee || this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee < this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee) {
+      return exports.ExType.DEX;
+    }
+
+    return exports.ExType.CEX;
   };
 
-  _proto.estimate = /*#__PURE__*/function () {
-    var _estimate = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee(params) {
+  _proto._approveTokensUse = /*#__PURE__*/function () {
+    var _approveTokensUse2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee3(exType) {
+      var _this = this;
+
+      var txsToApprove, signerAdress, ERC721Abi;
+      return runtime_1.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              txsToApprove = this.estimationResponse.approveRequired;
+              _context3.next = 3;
+              return this.signer.getAddress();
+
+            case 3:
+              signerAdress = _context3.sent;
+              ERC721Abi = ERC721_json.abi;
+              return _context3.abrupt("return", Promise.all(txsToApprove.map( /*#__PURE__*/function () {
+                var _ref = _asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2(txToApprove, txIndex) {
+                  var approvalGasUsage, gasLimit, contract, amountOrId, tx, nonce, txData;
+                  return runtime_1.wrap(function _callee2$(_context2) {
+                    while (1) {
+                      switch (_context2.prev = _context2.next) {
+                        case 0:
+                          approvalGasUsage = _this.estimationResponse.executionSwap[exType].simulations.approve[txIndex].gasUsage;
+
+                          if (txToApprove.tokenId) {
+                            contract = new ethers.ethers.Contract(txToApprove.tokenAddress.toString(), ERC721Abi, _this.provider);
+                            amountOrId = txToApprove.tokenId;
+                            gasLimit = ethers.ethers.BigNumber.from(55000);
+                          } else {
+                            contract = new ethers.ethers.Contract(txToApprove.tokenAddress.toString(), ERC20ABI, _this.provider);
+                            amountOrId = txToApprove.amount;
+                            gasLimit = ethers.ethers.BigNumber.from(approvalGasUsage);
+                          }
+
+                          _context2.next = 4;
+                          return contract.populateTransaction.approve(txToApprove.spender, amountOrId);
+
+                        case 4:
+                          tx = _context2.sent;
+                          _context2.next = 7;
+                          return _this.signer.getTransactionCount();
+
+                        case 7:
+                          _context2.t0 = _context2.sent;
+                          _context2.t1 = txIndex;
+                          nonce = _context2.t0 + _context2.t1;
+                          txData = {
+                            type: '0x02',
+                            chainId: ethers.ethers.utils.hexlify(_this.chainId),
+                            nonce: ethers.ethers.utils.hexlify(ethers.ethers.BigNumber.from(nonce), {
+                              hexPad: 'left'
+                            }),
+                            maxFeePerGas: _this.maxFeePerGas,
+                            maxPriorityFeePerGas: _this.maxPriorityFeePerGas,
+                            gasLimit: ethers.ethers.utils.hexlify(gasLimit, {
+                              hexPad: 'left'
+                            }),
+                            to: tx.to,
+                            value: ethers.ethers.utils.hexlify(ethers.ethers.BigNumber.from(0)),
+                            data: tx.data
+                          };
+                          return _context2.abrupt("return", _this._signTransfer(txData, signerAdress));
+
+                        case 12:
+                        case "end":
+                          return _context2.stop();
+                      }
+                    }
+                  }, _callee2);
+                }));
+
+                return function (_x4, _x5) {
+                  return _ref.apply(this, arguments);
+                };
+              }())));
+
+            case 6:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3, this);
+    }));
+
+    function _approveTokensUse(_x3) {
+      return _approveTokensUse2.apply(this, arguments);
+    }
+
+    return _approveTokensUse;
+  }();
+
+  _proto._approveETHTransfer = /*#__PURE__*/function () {
+    var _approveETHTransfer2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee4(exType, speed, nonce) {
+      var value, signerAddress, feenoContractAddress, ETHGasFee, tx;
+      return runtime_1.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              _context4.next = 2;
+              return this.signer.getAddress();
+
+            case 2:
+              signerAddress = _context4.sent;
+              feenoContractAddress = config[this.chainId].FeeNoContract;
+              ETHGasFee = (this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee * Math.pow(10, 18)).toFixed(0);
+
+              if (this.estimationResponse.ETHQuantity) {
+                value = this.estimationResponse.erc20TokenToPayFee ? ethers.ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString() : this.estimationResponse.ETHQuantity;
+              } else {
+                value = ETHGasFee;
+              }
+
+              _context4.t0 = ethers.ethers.utils.hexlify(this.chainId);
+              _context4.t1 = ethers.ethers.utils;
+              _context4.t2 = ethers.ethers.BigNumber;
+              _context4.next = 11;
+              return this.signer.getTransactionCount();
+
+            case 11:
+              _context4.t3 = _context4.sent;
+              _context4.t4 = nonce;
+              _context4.t5 = _context4.t3 + _context4.t4;
+              _context4.t6 = _context4.t2.from.call(_context4.t2, _context4.t5);
+              _context4.t7 = {
+                hexPad: 'left'
+              };
+              _context4.t8 = _context4.t1.hexlify.call(_context4.t1, _context4.t6, _context4.t7);
+              _context4.t9 = this.maxFeePerGas;
+              _context4.t10 = this.maxPriorityFeePerGas;
+              _context4.t11 = ethers.ethers.utils.hexlify(ethers.ethers.BigNumber.from(21100), {
+                hexPad: 'left'
+              });
+              _context4.t12 = signerAddress;
+              _context4.t13 = feenoContractAddress;
+              _context4.t14 = ethers.ethers.utils.hexlify(ethers.ethers.BigNumber.from(value));
+              tx = {
+                type: '0x02',
+                chainId: _context4.t0,
+                nonce: _context4.t8,
+                maxFeePerGas: _context4.t9,
+                maxPriorityFeePerGas: _context4.t10,
+                gasLimit: _context4.t11,
+                from: _context4.t12,
+                to: _context4.t13,
+                value: _context4.t14
+              };
+              return _context4.abrupt("return", this._signTransfer(tx, signerAddress));
+
+            case 25:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4, this);
+    }));
+
+    function _approveETHTransfer(_x6, _x7, _x8) {
+      return _approveETHTransfer2.apply(this, arguments);
+    }
+
+    return _approveETHTransfer;
+  }();
+
+  _proto._signTransfer = /*#__PURE__*/function () {
+    var _signTransfer2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee5(tx$1, signerAddress) {
+      var txFactory, unsignedTx, signature, signatureParts, txWithSignature;
+      return runtime_1.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              txFactory = tx.FeeMarketEIP1559Transaction.fromTxData(tx$1, {
+                common: this.common
+              });
+              unsignedTx = txFactory.getMessageToSign();
+              _context5.next = 4;
+              return this._getSignature(signerAddress, ethers.ethers.utils.hexlify(unsignedTx));
+
+            case 4:
+              signature = _context5.sent;
+              signatureParts = ethers.ethers.utils.splitSignature(signature);
+              txWithSignature = txFactory._processSignature(signatureParts.v, Buffer.from(ethers.ethers.utils.arrayify(signatureParts.r)), Buffer.from(ethers.ethers.utils.arrayify(signatureParts.s)));
+              return _context5.abrupt("return", ethers.ethers.utils.hexlify(txWithSignature.serialize()));
+
+            case 8:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5, this);
+    }));
+
+    function _signTransfer(_x9, _x10) {
+      return _signTransfer2.apply(this, arguments);
+    }
+
+    return _signTransfer;
+  }();
+
+  _proto._getExecuteAllowance = /*#__PURE__*/function () {
+    var _getExecuteAllowance2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee6(exType, speed) {
+      var signerAdress, metadataToSign, message, hashedMessage, signature;
+      return runtime_1.wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              _context6.next = 2;
+              return this.signer.getAddress();
+
+            case 2:
+              signerAdress = _context6.sent;
+              metadataToSign = this.estimationResponse.executionSwap[exType].miningSpeed[speed].data.messageForSing;
+              message = ethers.ethers.utils.arrayify(metadataToSign);
+              hashedMessage = ethers.ethers.utils.keccak256(ethers.ethers.utils.concat([ethers.ethers.utils.toUtf8Bytes('\x19Ethereum Signed Message:\n'), ethers.ethers.utils.toUtf8Bytes(String(message.length)), message]));
+              _context6.next = 8;
+              return this._getSignature(signerAdress, hashedMessage);
+
+            case 8:
+              signature = _context6.sent;
+              return _context6.abrupt("return", signature);
+
+            case 10:
+            case "end":
+              return _context6.stop();
+          }
+        }
+      }, _callee6, this);
+    }));
+
+    function _getExecuteAllowance(_x11, _x12) {
+      return _getExecuteAllowance2.apply(this, arguments);
+    }
+
+    return _getExecuteAllowance;
+  }()
+  /**
+   * Send submit transaction.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * // If submit is successful you will get SubmissionResponse typed response.
+   * const submitResponce = FeeNoRequestInstance.send(sendRequest);
+   * ```
+   * @param {RequestParams} sendRequest
+   * @returns {Promise<SubmissionResponse>}
+   */
+  ;
+
+  _proto.send =
+  /*#__PURE__*/
+  function () {
+    var _send = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee7(sendRequest) {
+      var eXtype, approvalTxRawData, metadataSignature, txToSubmit, response;
+      return runtime_1.wrap(function _callee7$(_context7) {
+        while (1) {
+          switch (_context7.prev = _context7.next) {
+            case 0:
+              eXtype = this._getSwapType(sendRequest);
+              _context7.next = 3;
+              return this._approveTokensUse(eXtype);
+
+            case 3:
+              approvalTxRawData = _context7.sent;
+
+              if (!(this.estimationResponse.ETHQuantity || !this.estimationResponse.erc20TokenToPayFee)) {
+                _context7.next = 10;
+                break;
+              }
+
+              _context7.t0 = approvalTxRawData;
+              _context7.next = 8;
+              return this._approveETHTransfer(eXtype, sendRequest.speed, approvalTxRawData.length);
+
+            case 8:
+              _context7.t1 = _context7.sent;
+
+              _context7.t0.push.call(_context7.t0, _context7.t1);
+
+            case 10:
+              _context7.next = 12;
+              return this._getExecuteAllowance(eXtype, sendRequest.speed);
+
+            case 12:
+              metadataSignature = _context7.sent;
+              txToSubmit = {
+                estimationId: this.estimationResponse.id,
+                approvalTxRawData: approvalTxRawData,
+                userSign: metadataSignature,
+                processingMode: eXtype,
+                miningSpeed: sendRequest.speed,
+                blocksCountToResubmit: 20
+              };
+              _context7.next = 16;
+              return this.FeeNoApi.send(txToSubmit);
+
+            case 16:
+              response = _context7.sent;
+              this.bundleId = response.bundleId ? response.bundleId : this.bundleId;
+              return _context7.abrupt("return", response);
+
+            case 19:
+            case "end":
+              return _context7.stop();
+          }
+        }
+      }, _callee7, this);
+    }));
+
+    function send(_x13) {
+      return _send.apply(this, arguments);
+    }
+
+    return send;
+  }()
+  /**
+   * Cancel submit request if it's not mined yet.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
+   * // errorMessage: "Transaction not found"
+   * const cancelRequest1 = feeNoRequest.cancel();
+   *
+   * const submitResponce = feeNoRequest.send(sendRequest);
+   * // Transaction will be canceled. You will get SubmissionResponse type response.
+   * const cancelRequest2 = feeNoRequest.cancel();
+   *
+   * // Transaction is canceled already. You will get the same response as from cancelRequest2.
+   * const cancelRequest3 = feeNoRequest.cancel();
+   * ```
+   * @returns {Promise<SubmissionResponse>}
+   */
+  ;
+
+  _proto.cancel =
+  /*#__PURE__*/
+  function () {
+    var _cancel = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee8() {
+      return runtime_1.wrap(function _callee8$(_context8) {
+        while (1) {
+          switch (_context8.prev = _context8.next) {
+            case 0:
+              return _context8.abrupt("return", this.FeeNoApi.cancel(this.bundleId));
+
+            case 1:
+            case "end":
+              return _context8.stop();
+          }
+        }
+      }, _callee8, this);
+    }));
+
+    function cancel() {
+      return _cancel.apply(this, arguments);
+    }
+
+    return cancel;
+  }()
+  /**
+   * Get the transaction status.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new FeeNo( 1 );
+   * const feeNoRequest= feeNo.createFeenoRequest(estimateData, provider);
+   * // errorMessage: "Please, send transaction first"
+   * const cancelRequest1 = feeNoRequest.status();
+   *
+   * const submitResponce = feeNoRequest.send(sendRequest);
+   * // You will get SubmissionResponse type response
+   * const cancelRequest2 = feeNoRequest.status();
+   * ```
+   * @returns {Promise<SubmissionResponse>}
+   */
+  ;
+
+  _proto.getStatus =
+  /*#__PURE__*/
+  function () {
+    var _getStatus = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee9() {
+      return runtime_1.wrap(function _callee9$(_context9) {
+        while (1) {
+          switch (_context9.prev = _context9.next) {
+            case 0:
+              return _context9.abrupt("return", this.FeeNoApi.getStatus(this.bundleId));
+
+            case 1:
+            case "end":
+              return _context9.stop();
+          }
+        }
+      }, _callee9, this);
+    }));
+
+    function getStatus() {
+      return _getStatus.apply(this, arguments);
+    }
+
+    return getStatus;
+  }();
+
+  return FeeNoRequest;
+}();
+
+var FeeNoApiRequests = /*#__PURE__*/function () {
+  /**
+   * FeeNoApiRequests instance is being created by the FeeNo class constructor.
+   * Constructor need the apiUrl as the input param.
+   */
+  function FeeNoApiRequests(apiUrl) {
+    this.apiUrl = apiUrl;
+  }
+  /**
+   * Send request for a list of the supported tokens to pay fee to Api.
+   * @returns {Promise<SupportedTokens>}
+   */
+
+
+  var _proto = FeeNoApiRequests.prototype;
+
+  _proto.getTokens =
+  /*#__PURE__*/
+  function () {
+    var _getTokens = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee() {
       var url, response;
       return runtime_1.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              url = this.apiUrl + "/estimate";
+              url = this.apiUrl + "/tokens";
               _context.next = 3;
-              return axios.post(url, params);
+              return axios.get(url);
 
             case 3:
               response = _context.sent;
-              return _context.abrupt("return", response.data);
+              return _context.abrupt("return", response.data.tokens);
 
             case 5:
             case "end":
@@ -866,41 +1621,31 @@ var FeeNo = /*#__PURE__*/function () {
       }, _callee, this);
     }));
 
-    function estimate(_x) {
-      return _estimate.apply(this, arguments);
+    function getTokens() {
+      return _getTokens.apply(this, arguments);
     }
 
-    return estimate;
-  }() // TODO: need to impliment
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return getTokens;
+  }()
+  /**
+   * Send estimation request to Api.
+   * @param {Estimate} requestParams
+   * @returns {Promise<FeeNoRequest>}
+   */
   ;
 
-  _proto.getTransaction = function getTransaction(bundleId) {
-    return Promise.resolve({
-      status: exports.TransactionStatus.InprogressType,
-      bundleId: '657e4567-e89b-12d3-a456-442266880000',
-      bloxrouteUrl: '6ghfj5-345kfg-rty4576feh',
-      transactions: ['0x613b12c803dd1c8565ee94dd86d1d772c81b46c1', '0xb344147ea92cf102cd92ec996b8986ddca4a918e', '0x5c3f649ffdbc91a247ac45fc2c4c63f9319e5135'],
-      transactionHashes: ['0x46bd0cc25add06ff8847c66bf3374dc65c291a1f7ff4ee3734fdb99f38d84d9a', '0x58aa8e4bf444463ee2cf2200b767a92f32f29ff4bfd626b25b9b5d2470ef7f02', '0x1319932d1f4ed6034c6d06c176628f9001d864555c00ecf8834b961852a50484'],
-      broadcastCount: '5000000',
-      blocksCountToResubmit: '30'
-    });
-  } // TODO: need to impliment
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ;
-
-  _proto.submit =
+  _proto.createFeenoRequest =
   /*#__PURE__*/
   function () {
-    var _submit = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2(params) {
+    var _createFeenoRequest = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2(requestParams) {
       var url, response;
       return runtime_1.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              url = this.apiUrl + "/submit";
+              url = this.apiUrl + "/estimate";
               _context2.next = 3;
-              return axios.post(url, params);
+              return axios.post(url, requestParams);
 
             case 3:
               response = _context2.sent;
@@ -914,47 +1659,37 @@ var FeeNo = /*#__PURE__*/function () {
       }, _callee2, this);
     }));
 
-    function submit(_x2) {
-      return _submit.apply(this, arguments);
+    function createFeenoRequest(_x) {
+      return _createFeenoRequest.apply(this, arguments);
     }
 
-    return submit;
-  }();
+    return createFeenoRequest;
+  }()
+  /**
+   * Send submit request to Api.
+   * @param {Submit} txToSubmit
+   * @returns {Promise<SubmissionResponse>}
+   */
+  ;
 
-  _proto.signTransaction = /*#__PURE__*/function () {
-    var _signTransaction = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee3(params) {
-      var signature;
+  _proto.send =
+  /*#__PURE__*/
+  function () {
+    var _send = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee3(txToSubmit) {
+      var url, response;
       return runtime_1.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              if (this.provider) {
-                _context3.next = 2;
-                break;
-              }
+              url = this.apiUrl + "/submit";
+              _context3.next = 3;
+              return axios.post(url, txToSubmit);
 
-              throw new Error('No provider specified');
+            case 3:
+              response = _context3.sent;
+              return _context3.abrupt("return", response.data);
 
-            case 2:
-              if (this.provider.provider.request) {
-                _context3.next = 4;
-                break;
-              }
-
-              return _context3.abrupt("return", '');
-
-            case 4:
-              _context3.next = 6;
-              return this.provider.provider.request({
-                method: 'eth_sign',
-                params: [params.addressFrom, ethers.ethers.utils.hexlify(params.message)]
-              });
-
-            case 6:
-              signature = _context3.sent;
-              return _context3.abrupt("return", signature);
-
-            case 8:
+            case 5:
             case "end":
               return _context3.stop();
           }
@@ -962,49 +1697,37 @@ var FeeNo = /*#__PURE__*/function () {
       }, _callee3, this);
     }));
 
-    function signTransaction(_x3) {
-      return _signTransaction.apply(this, arguments);
+    function send(_x2) {
+      return _send.apply(this, arguments);
     }
 
-    return signTransaction;
-  }();
+    return send;
+  }()
+  /**
+   * Send getStatus request to Api.
+   * @param {string} bundleId
+   * @returns {Promise<SubmissionResponse>}
+   */
+  ;
 
-  _proto.signMessage = /*#__PURE__*/function () {
-    var _signMessage = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee4(params) {
-      var message, hashedMessage, signature;
+  _proto.getStatus =
+  /*#__PURE__*/
+  function () {
+    var _getStatus = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee4(bundleId) {
+      var url, response;
       return runtime_1.wrap(function _callee4$(_context4) {
         while (1) {
           switch (_context4.prev = _context4.next) {
             case 0:
-              if (this.provider) {
-                _context4.next = 2;
-                break;
-              }
+              url = this.apiUrl + "/bundle/" + bundleId;
+              _context4.next = 3;
+              return axios.get(url);
 
-              throw new Error('No provider specified');
+            case 3:
+              response = _context4.sent;
+              return _context4.abrupt("return", response.data);
 
-            case 2:
-              if (this.provider.provider.request) {
-                _context4.next = 4;
-                break;
-              }
-
-              return _context4.abrupt("return", '');
-
-            case 4:
-              message = ethers.ethers.utils.arrayify(params.message);
-              hashedMessage = ethers.ethers.utils.keccak256(ethers.ethers.utils.concat([ethers.ethers.utils.toUtf8Bytes('\x19Ethereum Signed Message:\n'), ethers.ethers.utils.toUtf8Bytes(String(message.length)), message]));
-              _context4.next = 8;
-              return this.provider.provider.request({
-                method: 'eth_sign',
-                params: [params.addressFrom, hashedMessage]
-              });
-
-            case 8:
-              signature = _context4.sent;
-              return _context4.abrupt("return", signature);
-
-            case 10:
+            case 5:
             case "end":
               return _context4.stop();
           }
@@ -1012,15 +1735,170 @@ var FeeNo = /*#__PURE__*/function () {
       }, _callee4, this);
     }));
 
-    function signMessage(_x4) {
-      return _signMessage.apply(this, arguments);
+    function getStatus(_x3) {
+      return _getStatus.apply(this, arguments);
     }
 
-    return signMessage;
+    return getStatus;
+  }()
+  /**
+   * Send cancel request to Api.
+   * @param {string} bundleId
+   * @returns {Promise<SubmissionResponse>}
+   */
+  ;
+
+  _proto.cancel =
+  /*#__PURE__*/
+  function () {
+    var _cancel = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee5(bundleId) {
+      var url, response;
+      return runtime_1.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              url = this.apiUrl + "/bundle/" + bundleId + "/cancel";
+              _context5.next = 3;
+              return axios["delete"](url);
+
+            case 3:
+              response = _context5.sent;
+              return _context5.abrupt("return", response.data);
+
+            case 5:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5, this);
+    }));
+
+    function cancel(_x4) {
+      return _cancel.apply(this, arguments);
+    }
+
+    return cancel;
+  }();
+
+  return FeeNoApiRequests;
+}();
+
+var FeeNo = /*#__PURE__*/function () {
+  /**
+   * Constructor need the chainId as the input params(for example, Goerli testnet chainId is 5).
+   ** Default chainId is 1(MainNet).
+   * @example
+   * Implementation with all params.
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new RemmeRest(5);
+   * ```
+   */
+  function FeeNo(chainId) {
+    if (chainId === void 0) {
+      chainId = 1;
+    }
+
+    if (!Object.values(exports.SupportedChains).includes(chainId)) throw new Error('Unsupported network');
+    this.chainId = chainId;
+    this.apiURL = config[this.chainId].apiURL;
+    this.FeeNoApi = new FeeNoApiRequests(this.apiURL);
+  }
+  /**
+   * Make and send estimate request with given estimation data and user's provider.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new RemmeRest();
+   * const FeeNoRequest = feeNo.createFeenoRequest(estimateParams, provider);
+   * ```
+   * @param {Estimate} params
+   * @param {Web3Provider} provider
+   * @returns {Promise<FeeNoRequest>}
+   */
+
+
+  var _proto = FeeNo.prototype;
+
+  _proto.createFeenoRequest =
+  /*#__PURE__*/
+  function () {
+    var _createFeenoRequest = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee(params, provider) {
+      var response;
+      return runtime_1.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              _context.next = 2;
+              return this.FeeNoApi.createFeenoRequest(params);
+
+            case 2:
+              response = _context.sent;
+              return _context.abrupt("return", new FeeNoRequest(response, provider, this.chainId, this.FeeNoApi));
+
+            case 4:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, this);
+    }));
+
+    function createFeenoRequest(_x, _x2) {
+      return _createFeenoRequest.apply(this, arguments);
+    }
+
+    return createFeenoRequest;
+  }()
+  /**
+   * Returns the object of supported tokens to pay fee.
+   * @example
+   * ```typescript
+   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   *
+   * const feeNo = new RemmeRest();
+   * const supportedTokens = feeNo.getTokens();
+   * ```
+   * @returns {Promise<SupportedTokens>}
+   */
+  ;
+
+  _proto.getTokens =
+  /*#__PURE__*/
+  function () {
+    var _getTokens = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee2() {
+      var response;
+      return runtime_1.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              _context2.next = 2;
+              return this.FeeNoApi.getTokens();
+
+            case 2:
+              response = _context2.sent;
+              return _context2.abrupt("return", response);
+
+            case 4:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2, this);
+    }));
+
+    function getTokens() {
+      return _getTokens.apply(this, arguments);
+    }
+
+    return getTokens;
   }();
 
   return FeeNo;
 }();
 
 exports.FeeNo = FeeNo;
+exports.FeeNoRequest = FeeNoRequest;
 //# sourceMappingURL=feeno-sdk.cjs.development.js.map

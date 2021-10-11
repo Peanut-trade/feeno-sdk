@@ -1,22 +1,54 @@
 import { Web3Provider } from '@ethersproject/providers';
-import { BundleId, CancellationResponse, Estimate, EstimationResponse, SubmissionResponse, Submit, TransactionResult, Sign } from './types';
-export interface IFeeNo {
-    estimate(params: Estimate): Promise<EstimationResponse>;
-    submit(params: Submit): Promise<SubmissionResponse>;
-    cancel(bundleId: BundleId): Promise<CancellationResponse>;
-    getTransaction(bundleId: BundleId): Promise<TransactionResult>;
-    signTransaction(params: Sign): Promise<string>;
-    signMessage(params: Sign): Promise<string>;
+import { AddressLike } from 'ethereumjs-util';
+import { FeeNoRequest } from './FeeNoRequest';
+import { FeeNoApiRequests } from './FeeNoApiRequests';
+import { Estimate, SupportedTokens, SupportedChains } from './types';
+interface IFeeNo {
+    createFeenoRequest(params: Estimate, provider: Web3Provider): Promise<FeeNoRequest>;
+    getTokens(): Promise<SupportedTokens>;
 }
 export declare class FeeNo implements IFeeNo {
-    private apiUrl;
-    address: string;
-    provider?: Web3Provider;
-    constructor(provider?: Web3Provider);
-    cancel(bundleId: BundleId): Promise<CancellationResponse>;
-    estimate(params: Estimate): Promise<EstimationResponse>;
-    getTransaction(bundleId: BundleId): Promise<TransactionResult>;
-    submit(params: Submit): Promise<SubmissionResponse>;
-    signTransaction(params: Sign): Promise<string>;
-    signMessage(params: Sign): Promise<string>;
+    chainId: SupportedChains;
+    apiURL: string;
+    FeeNoContract: AddressLike;
+    FeeNoApi: FeeNoApiRequests;
+    /**
+     * Constructor need the chainId as the input params(for example, Goerli testnet chainId is 5).
+     ** Default chainId is 1(MainNet).
+     * @example
+     * Implementation with all params.
+     * ```typescript
+     * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+     *
+     * const feeNo = new RemmeRest(5);
+     * ```
+     */
+    constructor(chainId?: number);
+    /**
+     * Make and send estimate request with given estimation data and user's provider.
+     * @example
+     * ```typescript
+     * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+     *
+     * const feeNo = new RemmeRest();
+     * const FeeNoRequest = feeNo.createFeenoRequest(estimateParams, provider);
+     * ```
+     * @param {Estimate} params
+     * @param {Web3Provider} provider
+     * @returns {Promise<FeeNoRequest>}
+     */
+    createFeenoRequest(params: Estimate, provider: Web3Provider): Promise<FeeNoRequest>;
+    /**
+     * Returns the object of supported tokens to pay fee.
+     * @example
+     * ```typescript
+     * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+     *
+     * const feeNo = new RemmeRest();
+     * const supportedTokens = feeNo.getTokens();
+     * ```
+     * @returns {Promise<SupportedTokens>}
+     */
+    getTokens(): Promise<SupportedTokens>;
 }
+export {};
