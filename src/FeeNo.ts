@@ -27,7 +27,7 @@ export class FeeNo implements IFeeNo {
    * ```typescript
    * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
    *
-   * const feeNo = new RemmeRest(5);
+   * const feeNo = new FeeNo(5);
    * ```
    */
   constructor(chainId = 1) {
@@ -43,7 +43,7 @@ export class FeeNo implements IFeeNo {
    * ```typescript
    * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
    *
-   * const feeNo = new RemmeRest();
+   * const feeNo = new FeeNo();
    * const FeeNoRequest = feeNo.createFeenoRequest(estimateParams, provider);
    * ```
    * @param {Estimate} params
@@ -61,7 +61,7 @@ export class FeeNo implements IFeeNo {
    * ```typescript
    * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
    *
-   * const feeNo = new RemmeRest();
+   * const feeNo = new FeeNo();
    * const supportedTokens = feeNo.getTokens();
    * ```
    * @returns {Promise<SupportedTokens>}
