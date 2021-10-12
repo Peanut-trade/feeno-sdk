@@ -1792,7 +1792,7 @@ var FeeNo = /*#__PURE__*/function () {
    * ```typescript
    * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
    *
-   * const feeNo = new RemmeRest(5);
+   * const feeNo = new FeeNo(5);
    * ```
    */
   function FeeNo(chainId) {
@@ -1811,7 +1811,7 @@ var FeeNo = /*#__PURE__*/function () {
    * ```typescript
    * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
    *
-   * const feeNo = new RemmeRest();
+   * const feeNo = new FeeNo();
    * const FeeNoRequest = feeNo.createFeenoRequest(estimateParams, provider);
    * ```
    * @param {Estimate} params
@@ -1858,7 +1858,7 @@ var FeeNo = /*#__PURE__*/function () {
    * ```typescript
    * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
    *
-   * const feeNo = new RemmeRest();
+   * const feeNo = new FeeNo();
    * const supportedTokens = feeNo.getTokens();
    * ```
    * @returns {Promise<SupportedTokens>}
