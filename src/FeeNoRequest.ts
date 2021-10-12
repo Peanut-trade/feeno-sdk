@@ -48,7 +48,7 @@ export class FeeNoRequest implements IFeeNoRequest {
    * @example
    * Implementation with all params.
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo();
    * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
@@ -225,7 +225,7 @@ export class FeeNoRequest implements IFeeNoRequest {
    * Send submit transaction.
    * @example
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo( 1 );
    * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
@@ -266,7 +266,7 @@ export class FeeNoRequest implements IFeeNoRequest {
    * Cancel submit request if it's not mined yet.
    * @example
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo( 1 );
    * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
@@ -290,7 +290,7 @@ export class FeeNoRequest implements IFeeNoRequest {
    * Get the transaction status.
    * @example
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo( 1 );
    * const feeNoRequest= feeNo.createFeenoRequest(estimateData, provider);

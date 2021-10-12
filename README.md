@@ -5,19 +5,19 @@
 Using npm:
 
 ```bash
-$ npm install feeno-sdk
+$ npm install @peanut.trade/feeno-sdk
 ```
 
 Using yarn:
 
 ```bash
-$ yarn add feeno-sdk
+$ yarn add @peanut.trade/feeno-sdk
 ```
 
 ## Example
 
 ```js
-import { FeeNo }  from 'feeno-sdk';
+import { FeeNo }  from '@peanut.trade/feeno-sdk';
 
 const feeNo = new FeeNo(1);
 
@@ -26,7 +26,7 @@ const supportedTokens = feeNo.getTokens();
 const feeNoRequest = feeNo.createFeenoRequest(estimateParams, provider);
 //feeNoRequest is an instance of FeeNoApiRequests
 
-const submitResponce = feeNoRequest.send(sendRequest);
+const submitResponce = feeNoRequest.send({ exType: "dexSwap", speed: "medium" });
 
 const cancelResponce = feeNoRequest.cancel();
 

@@ -18,7 +18,7 @@ export declare class FeeNo implements IFeeNo {
      * @example
      * Implementation with all params.
      * ```typescript
-     * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+     * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
      *
      * const feeNo = new FeeNo(5);
      * ```
@@ -28,7 +28,7 @@ export declare class FeeNo implements IFeeNo {
      * Make and send estimate request with given estimation data and user's provider.
      * @example
      * ```typescript
-     * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+     * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
      *
      * const feeNo = new FeeNo();
      * const FeeNoRequest = feeNo.createFeenoRequest(estimateParams, provider);
@@ -42,7 +42,7 @@ export declare class FeeNo implements IFeeNo {
      * Returns the object of supported tokens to pay fee.
      * @example
      * ```typescript
-     * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+     * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
      *
      * const feeNo = new FeeNo();
      * const supportedTokens = feeNo.getTokens();

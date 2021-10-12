@@ -1082,7 +1082,7 @@ var FeeNoRequest = /*#__PURE__*/function () {
    * @example
    * Implementation with all params.
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo();
    * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
@@ -1410,7 +1410,7 @@ var FeeNoRequest = /*#__PURE__*/function () {
    * Send submit transaction.
    * @example
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo( 1 );
    * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
@@ -1492,7 +1492,7 @@ var FeeNoRequest = /*#__PURE__*/function () {
    * Cancel submit request if it's not mined yet.
    * @example
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo( 1 );
    * const feeNoRequest = feeNo.createFeenoRequest(estimateData, provider);
@@ -1538,7 +1538,7 @@ var FeeNoRequest = /*#__PURE__*/function () {
    * Get the transaction status.
    * @example
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo( 1 );
    * const feeNoRequest= feeNo.createFeenoRequest(estimateData, provider);
@@ -1791,7 +1791,7 @@ var FeeNo = /*#__PURE__*/function () {
    * @example
    * Implementation with all params.
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo(5);
    * ```
@@ -1810,7 +1810,7 @@ var FeeNo = /*#__PURE__*/function () {
    * Make and send estimate request with given estimation data and user's provider.
    * @example
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo();
    * const FeeNoRequest = feeNo.createFeenoRequest(estimateParams, provider);
@@ -1857,7 +1857,7 @@ var FeeNo = /*#__PURE__*/function () {
    * Returns the object of supported tokens to pay fee.
    * @example
    * ```typescript
-   * import { FeeNo, FeeNoApiRequests }  from 'feeno-sdk';
+   * import { FeeNo, FeeNoApiRequests }  from '@peanut.trade/feeno-sdk';
    *
    * const feeNo = new FeeNo();
    * const supportedTokens = feeNo.getTokens();
