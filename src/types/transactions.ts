@@ -41,7 +41,7 @@ export interface TransactionForExactInput {
   deadline: number;
   amountIn: BNLike;
   amountOutMinimum: BNLike;
-  value: BNLike;
+  value?: BNLike;
 }
 
 export interface TransactionForDecreaseLiquidity {
