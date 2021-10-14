@@ -1,12 +1,13 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { AddressLike } from 'ethereumjs-util';
+import { Wallet } from 'ethers';
 import config from '../config/default.json';
-import { FeeNoRequest } from './FeeNoRequest';
+import { IFeeNoRequest, WalletFeeNoRequest, Web3ProviderFeeNoRequest } from '.';
 import { FeeNoApiRequests } from './FeeNoApiRequests';
 import { Estimate, SupportedTokens, SupportedChains } from './types';
 
 interface IFeeNo {
-  createFeenoRequest(params: Estimate, provider: Web3Provider): Promise<FeeNoRequest>;
+  createFeenoRequest(params: Estimate, provider: Web3Provider): Promise<IFeeNoRequest>;
   getTokens(): Promise<SupportedTokens>;
 }
 
@@ -48,11 +49,21 @@ export class FeeNo implements IFeeNo {
    * ```
    * @param {Estimate} params
    * @param {Web3Provider} provider
-   * @returns {Promise<FeeNoRequest>}
+   * @returns {Promise<IFeeNoRequest>}
    */
-  async createFeenoRequest(params: Estimate, provider: Web3Provider): Promise<FeeNoRequest> {
+  async createFeenoRequest(
+    params: Estimate,
+    provider: Web3Provider | Wallet
+  ): Promise<IFeeNoRequest> {
     const response = await this.FeeNoApi.createFeenoRequest(params);
-    return new FeeNoRequest(response, provider, this.chainId, this.FeeNoApi);
+    if (provider.constructor.name === 'Wallet') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return new WalletFeeNoRequest(response, provider, this.chainId, this.FeeNoApi);
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return new Web3ProviderFeeNoRequest(response, provider, this.chainId, this.FeeNoApi);
   }
 
   /**

@@ -1,10 +1,11 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { AddressLike } from 'ethereumjs-util';
-import { FeeNoRequest } from './FeeNoRequest';
+import { Wallet } from 'ethers';
+import { IFeeNoRequest } from '.';
 import { FeeNoApiRequests } from './FeeNoApiRequests';
 import { Estimate, SupportedTokens, SupportedChains } from './types';
 interface IFeeNo {
-    createFeenoRequest(params: Estimate, provider: Web3Provider): Promise<FeeNoRequest>;
+    createFeenoRequest(params: Estimate, provider: Web3Provider): Promise<IFeeNoRequest>;
     getTokens(): Promise<SupportedTokens>;
 }
 export declare class FeeNo implements IFeeNo {
@@ -35,9 +36,9 @@ export declare class FeeNo implements IFeeNo {
      * ```
      * @param {Estimate} params
      * @param {Web3Provider} provider
-     * @returns {Promise<FeeNoRequest>}
+     * @returns {Promise<IFeeNoRequest>}
      */
-    createFeenoRequest(params: Estimate, provider: Web3Provider): Promise<FeeNoRequest>;
+    createFeenoRequest(params: Estimate, provider: Web3Provider | Wallet): Promise<IFeeNoRequest>;
     /**
      * Returns the object of supported tokens to pay fee.
      * @example
