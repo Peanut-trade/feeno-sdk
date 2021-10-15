@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { ethers } from 'ethers';
 import Common, { Hardfork } from '@ethereumjs/common';
-import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
 import { abi } from '@openzeppelin/contracts/build/contracts/ERC721.json';
+import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
   try {
@@ -1457,7 +1457,7 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
               ERC721Abi = abi;
               return _context2.abrupt("return", Promise.all(txsToApprove.map( /*#__PURE__*/function () {
                 var _ref = _asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee(txToApprove, txIndex) {
-                  var approvalGasUsage, gasLimit, contract, amountOrId, tx, nonce, txData;
+                  var approvalGasUsage, gasLimit, contract, amountOrId, nonce, tx;
                   return runtime_1.wrap(function _callee$(_context) {
                     while (1) {
                       switch (_context.prev = _context.next) {
@@ -1475,33 +1475,27 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
                           }
 
                           _context.next = 4;
-                          return contract.populateTransaction.approve(txToApprove.spender, amountOrId);
-
-                        case 4:
-                          tx = _context.sent;
-                          _context.next = 7;
                           return _this.provider.getTransactionCount();
 
-                        case 7:
+                        case 4:
                           _context.t0 = _context.sent;
                           _context.t1 = txIndex;
                           nonce = _context.t0 + _context.t1;
-                          txData = {
-                            type: '0x02',
-                            chainId: ethers.utils.hexlify(_this.chainId),
+                          _context.next = 9;
+                          return contract.populateTransaction.approve(txToApprove.spender, amountOrId, {
+                            type: 2,
                             nonce: ethers.utils.hexlify(ethers.BigNumber.from(nonce), {
                               hexPad: 'left'
                             }),
                             maxFeePerGas: _this.maxFeePerGas,
                             maxPriorityFeePerGas: _this.maxPriorityFeePerGas,
-                            gasLimit: ethers.utils.hexlify(gasLimit, {
-                              hexPad: 'left'
-                            }),
-                            to: tx.to,
-                            value: ethers.utils.hexlify(ethers.BigNumber.from(0)),
-                            data: tx.data
-                          };
-                          return _context.abrupt("return", _this._signTransfer(txData));
+                            gasLimit: gasLimit
+                          });
+
+                        case 9:
+                          tx = _context.sent;
+                          tx.chainId = _this.chainId;
+                          return _context.abrupt("return", _this.provider.signTransaction(tx));
 
                         case 12:
                         case "end":
@@ -1552,7 +1546,7 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
                 value = ETHGasFee;
               }
 
-              _context3.t0 = ethers.utils.hexlify(this.chainId);
+              _context3.t0 = this.chainId;
               _context3.t1 = ethers.utils;
               _context3.t2 = ethers.BigNumber;
               _context3.next = 11;
@@ -1576,7 +1570,7 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
               _context3.t13 = feenoContractAddress;
               _context3.t14 = ethers.utils.hexlify(ethers.BigNumber.from(value));
               tx = {
-                type: '0x02',
+                type: 2,
                 chainId: _context3.t0,
                 nonce: _context3.t8,
                 maxFeePerGas: _context3.t9,
@@ -1586,7 +1580,7 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
                 to: _context3.t13,
                 value: _context3.t14
               };
-              return _context3.abrupt("return", this._signTransfer(tx));
+              return _context3.abrupt("return", this.provider.signTransaction(tx));
 
             case 25:
             case "end":
@@ -1632,27 +1626,23 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
     return _signMessage;
   }();
 
-  _proto._signTransfer = /*#__PURE__*/function () {
-    var _signTransfer2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee5(tx) {
-      var txFactory, unsignedTx, signature, signatureParts, txWithSignature;
+  _proto._getExecuteAllowance = /*#__PURE__*/function () {
+    var _getExecuteAllowance2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee5(exType, speed) {
+      var metadataToSign, message, signature;
       return runtime_1.wrap(function _callee5$(_context5) {
         while (1) {
           switch (_context5.prev = _context5.next) {
             case 0:
-              txFactory = FeeMarketEIP1559Transaction.fromTxData(tx, {
-                common: this.common
-              });
-              unsignedTx = txFactory.getMessageToSign();
+              metadataToSign = this.estimationResponse.executionSwap[exType].miningSpeed[speed].data.messageForSing;
+              message = ethers.utils.arrayify(metadataToSign);
               _context5.next = 4;
-              return this._signMessage(unsignedTx);
+              return this._signMessage(message);
 
             case 4:
               signature = _context5.sent;
-              signatureParts = ethers.utils.splitSignature(signature);
-              txWithSignature = txFactory._processSignature(signatureParts.v, Buffer.from(ethers.utils.arrayify(signatureParts.r)), Buffer.from(ethers.utils.arrayify(signatureParts.s)));
-              return _context5.abrupt("return", ethers.utils.hexlify(txWithSignature.serialize()));
+              return _context5.abrupt("return", signature);
 
-            case 8:
+            case 6:
             case "end":
               return _context5.stop();
           }
@@ -1660,38 +1650,7 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
       }, _callee5, this);
     }));
 
-    function _signTransfer(_x8) {
-      return _signTransfer2.apply(this, arguments);
-    }
-
-    return _signTransfer;
-  }();
-
-  _proto._getExecuteAllowance = /*#__PURE__*/function () {
-    var _getExecuteAllowance2 = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee6(exType, speed) {
-      var metadataToSign, message, signature;
-      return runtime_1.wrap(function _callee6$(_context6) {
-        while (1) {
-          switch (_context6.prev = _context6.next) {
-            case 0:
-              metadataToSign = this.estimationResponse.executionSwap[exType].miningSpeed[speed].data.messageForSing;
-              message = ethers.utils.arrayify(metadataToSign);
-              _context6.next = 4;
-              return this._signMessage(message);
-
-            case 4:
-              signature = _context6.sent;
-              return _context6.abrupt("return", signature);
-
-            case 6:
-            case "end":
-              return _context6.stop();
-          }
-        }
-      }, _callee6, this);
-    }));
-
-    function _getExecuteAllowance(_x9, _x10) {
+    function _getExecuteAllowance(_x8, _x9) {
       return _getExecuteAllowance2.apply(this, arguments);
     }
 
@@ -1716,39 +1675,39 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
   _proto.send =
   /*#__PURE__*/
   function () {
-    var _send = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee7(sendRequest) {
+    var _send = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee6(sendRequest) {
       var eXtype, approvalTxRawData, metadataSignature, txToSubmit, response;
-      return runtime_1.wrap(function _callee7$(_context7) {
+      return runtime_1.wrap(function _callee6$(_context6) {
         while (1) {
-          switch (_context7.prev = _context7.next) {
+          switch (_context6.prev = _context6.next) {
             case 0:
               eXtype = this._getSwapType(sendRequest);
-              _context7.next = 3;
+              _context6.next = 3;
               return this._approveTokensUse(eXtype);
 
             case 3:
-              approvalTxRawData = _context7.sent;
+              approvalTxRawData = _context6.sent;
 
               if (!(this.estimationResponse.ETHQuantity || !this.estimationResponse.erc20TokenToPayFee)) {
-                _context7.next = 10;
+                _context6.next = 10;
                 break;
               }
 
-              _context7.t0 = approvalTxRawData;
-              _context7.next = 8;
+              _context6.t0 = approvalTxRawData;
+              _context6.next = 8;
               return this._approveETHTransfer(eXtype, sendRequest.speed, approvalTxRawData.length);
 
             case 8:
-              _context7.t1 = _context7.sent;
+              _context6.t1 = _context6.sent;
 
-              _context7.t0.push.call(_context7.t0, _context7.t1);
+              _context6.t0.push.call(_context6.t0, _context6.t1);
 
             case 10:
-              _context7.next = 12;
+              _context6.next = 12;
               return this._getExecuteAllowance(eXtype, sendRequest.speed);
 
             case 12:
-              metadataSignature = _context7.sent;
+              metadataSignature = _context6.sent;
               txToSubmit = {
                 estimationId: this.estimationResponse.id,
                 approvalTxRawData: approvalTxRawData,
@@ -1757,23 +1716,23 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
                 miningSpeed: sendRequest.speed,
                 blocksCountToResubmit: 20
               };
-              _context7.next = 16;
+              _context6.next = 16;
               return this.FeeNoApi.send(txToSubmit);
 
             case 16:
-              response = _context7.sent;
+              response = _context6.sent;
               this.bundleId = response.bundleId ? response.bundleId : this.bundleId;
-              return _context7.abrupt("return", response);
+              return _context6.abrupt("return", response);
 
             case 19:
             case "end":
-              return _context7.stop();
+              return _context6.stop();
           }
         }
-      }, _callee7, this);
+      }, _callee6, this);
     }));
 
-    function send(_x11) {
+    function send(_x10) {
       return _send.apply(this, arguments);
     }
 
@@ -1804,19 +1763,19 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
   _proto.cancel =
   /*#__PURE__*/
   function () {
-    var _cancel = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee8() {
-      return runtime_1.wrap(function _callee8$(_context8) {
+    var _cancel = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee7() {
+      return runtime_1.wrap(function _callee7$(_context7) {
         while (1) {
-          switch (_context8.prev = _context8.next) {
+          switch (_context7.prev = _context7.next) {
             case 0:
-              return _context8.abrupt("return", this.FeeNoApi.cancel(this.bundleId));
+              return _context7.abrupt("return", this.FeeNoApi.cancel(this.bundleId));
 
             case 1:
             case "end":
-              return _context8.stop();
+              return _context7.stop();
           }
         }
-      }, _callee8, this);
+      }, _callee7, this);
     }));
 
     function cancel() {
@@ -1847,19 +1806,19 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
   _proto.getStatus =
   /*#__PURE__*/
   function () {
-    var _getStatus = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee9() {
-      return runtime_1.wrap(function _callee9$(_context9) {
+    var _getStatus = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/runtime_1.mark(function _callee8() {
+      return runtime_1.wrap(function _callee8$(_context8) {
         while (1) {
-          switch (_context9.prev = _context9.next) {
+          switch (_context8.prev = _context8.next) {
             case 0:
-              return _context9.abrupt("return", this.FeeNoApi.getStatus(this.bundleId));
+              return _context8.abrupt("return", this.FeeNoApi.getStatus(this.bundleId));
 
             case 1:
             case "end":
-              return _context9.stop();
+              return _context8.stop();
           }
         }
-      }, _callee9, this);
+      }, _callee8, this);
     }));
 
     function getStatus() {

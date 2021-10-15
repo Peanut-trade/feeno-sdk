@@ -28,7 +28,6 @@ export declare class WalletFeeNoRequest implements IFeeNoRequest {
     private _approveTokensUse;
     private _approveETHTransfer;
     private _signMessage;
-    private _signTransfer;
     private _getExecuteAllowance;
     /**
      * Send submit transaction.
