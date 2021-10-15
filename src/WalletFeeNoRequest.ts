@@ -1,7 +1,6 @@
 import { Bytes, ethers, Wallet } from 'ethers';
 import Common, { Hardfork } from '@ethereumjs/common';
 import { AddressLike } from 'ethereumjs-util';
-import { FeeMarketEIP1559Transaction } from '@ethereumjs/tx';
 import { abi } from '@openzeppelin/contracts/build/contracts/ERC721.json';
 import {
   approveRequired,
@@ -11,7 +10,6 @@ import {
   Speed,
   SubmissionResponse,
   SupportedChains,
-  TxData,
 } from './types';
 import { FeeNoApiRequests } from './FeeNoApiRequests';
 import ERC20ABI from './abis/ERC20.json';
