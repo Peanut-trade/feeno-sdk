@@ -106,21 +106,16 @@ export class WalletFeeNoRequest implements IFeeNoRequest {
           amountOrId = txToApprove.amount;
           gasLimit = ethers.BigNumber.from(approvalGasUsage);
         }
-        const tx = await contract.populateTransaction.approve(txToApprove.spender, amountOrId);
         const nonce = (await this.provider.getTransactionCount()) + txIndex;
-
-        const txData = {
-          type: '0x02',
-          chainId: ethers.utils.hexlify(this.chainId),
+        const tx = await contract.populateTransaction.approve(txToApprove.spender, amountOrId, {
+          type: 2,
           nonce: ethers.utils.hexlify(ethers.BigNumber.from(nonce), { hexPad: 'left' }),
           maxFeePerGas: this.maxFeePerGas,
           maxPriorityFeePerGas: this.maxPriorityFeePerGas,
-          gasLimit: ethers.utils.hexlify(gasLimit, { hexPad: 'left' }),
-          to: tx.to,
-          value: ethers.utils.hexlify(ethers.BigNumber.from(0)),
-          data: tx.data,
-        };
-        return this._signTransfer(txData);
+          gasLimit,
+        });
+        tx.chainId = this.chainId;
+        return this.provider.signTransaction(tx);
       })
     );
   }
@@ -144,8 +139,8 @@ export class WalletFeeNoRequest implements IFeeNoRequest {
     }
 
     const tx = {
-      type: '0x02',
-      chainId: ethers.utils.hexlify(this.chainId),
+      type: 2,
+      chainId: this.chainId,
       nonce: ethers.utils.hexlify(
         ethers.BigNumber.from((await this.provider.getTransactionCount()) + nonce),
         {
@@ -159,28 +154,12 @@ export class WalletFeeNoRequest implements IFeeNoRequest {
       to: feenoContractAddress,
       value: ethers.utils.hexlify(ethers.BigNumber.from(value)),
     };
-    return this._signTransfer(tx);
+    return this.provider.signTransaction(tx);
   }
 
   private async _signMessage(message: Bytes | string): Promise<string> {
     const signature = await this.provider.signMessage(message);
     return signature;
-  }
-
-  private async _signTransfer(tx: TxData): Promise<string> {
-    const txFactory = FeeMarketEIP1559Transaction.fromTxData(tx, { common: this.common });
-    const unsignedTx = txFactory.getMessageToSign();
-    const signature = await this._signMessage(unsignedTx);
-
-    const signatureParts = ethers.utils.splitSignature(signature);
-
-    const txWithSignature = txFactory._processSignature(
-      signatureParts.v,
-      Buffer.from(ethers.utils.arrayify(signatureParts.r)),
-      Buffer.from(ethers.utils.arrayify(signatureParts.s))
-    );
-
-    return ethers.utils.hexlify(txWithSignature.serialize());
   }
 
   private async _getExecuteAllowance(exType: ExType, speed: Speed): Promise<string> {
