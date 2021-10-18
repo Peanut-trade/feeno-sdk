@@ -200,7 +200,7 @@ export class WalletFeeNoRequest implements IFeeNoRequest {
       userSign: metadataSignature,
       processingMode: eXtype,
       miningSpeed: sendRequest.speed,
-      blocksCountToResubmit: 20,
+      blocksCountToResubmit: sendRequest.blocksCountToResubmit ? sendRequest.blocksCountToResubmit : 20,
     };
 
     const response = await this.FeeNoApi.send(txToSubmit);
