@@ -67,14 +67,13 @@ export class WalletFeeNoRequest implements IFeeNoRequest {
     if (sendRequest.exType !== 'optimalSwap') {
       return sendRequest.exType;
     }
-    if (
-      !this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee ||
-      this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee <
-        this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee
+    if (this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed] &&
+      this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee >
+      this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee
     ) {
-      return ExType.DEX;
+      return ExType.CEX;
     }
-    return ExType.CEX;
+    return ExType.DEX;
   }
 
   private async _approveTokensUse(exType: ExType): Promise<string[]> {
