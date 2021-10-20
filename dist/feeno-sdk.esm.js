@@ -1432,7 +1432,7 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
 
   var _proto = WalletFeeNoRequest.prototype;
 
-  _proto._getSwapType = function _getSwapType(sendRequest) {
+  _proto.getSwapType = function getSwapType(sendRequest) {
     if (sendRequest.exType !== 'optimalSwap') {
       return sendRequest.exType;
     }
@@ -1681,7 +1681,7 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
         while (1) {
           switch (_context6.prev = _context6.next) {
             case 0:
-              eXtype = this._getSwapType(sendRequest);
+              eXtype = this.getSwapType(sendRequest);
               _context6.next = 3;
               return this._approveTokensUse(eXtype);
 
@@ -1914,7 +1914,7 @@ var Web3ProviderFeeNoRequest = /*#__PURE__*/function () {
     return _getSignature;
   }();
 
-  _proto._getSwapType = function _getSwapType(sendRequest) {
+  _proto.getSwapType = function getSwapType(sendRequest) {
     if (sendRequest.exType !== 'optimalSwap') {
       return sendRequest.exType;
     }
@@ -2186,7 +2186,7 @@ var Web3ProviderFeeNoRequest = /*#__PURE__*/function () {
         while (1) {
           switch (_context7.prev = _context7.next) {
             case 0:
-              eXtype = this._getSwapType(sendRequest);
+              eXtype = this.getSwapType(sendRequest);
               _context7.next = 3;
               return this._approveTokensUse(eXtype);
 
