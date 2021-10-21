@@ -63,7 +63,7 @@ export class WalletFeeNoRequest implements IFeeNoRequest {
     this.bundleId = '0x';
   }
 
-  private _getSwapType(sendRequest: RequestParams): ExType {
+  getSwapType(sendRequest: RequestParams): ExType {
     if (sendRequest.exType !== 'optimalSwap') {
       return sendRequest.exType;
     }
@@ -183,7 +183,7 @@ export class WalletFeeNoRequest implements IFeeNoRequest {
    * @returns {Promise<SubmissionResponse>}
    */
   async send(sendRequest: RequestParams): Promise<SubmissionResponse> {
-    const eXtype = this._getSwapType(sendRequest);
+    const eXtype = this.getSwapType(sendRequest);
 
     const approvalTxRawData = await this._approveTokensUse(eXtype);
 
