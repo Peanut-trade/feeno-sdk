@@ -146,11 +146,8 @@ export class Web3ProviderFeeNoRequest implements IFeeNoRequest {
     let value;
     const signerAddress: AddressLike = await this.signer.getAddress();
     const feenoContractAddress: AddressLike = config[this.chainId].FeeNoContract;
-
-    const ETHGasFee = (
-      this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee *
-      10 ** 18
-    ).toFixed(0);
+    const ETHGasFee = ethers.utils.parseEther(
+      (this.estimationResponse.executionSwap[exType].miningSpeed[speed].tokenBasedGasFee).toString());
 
     if (this.estimationResponse.ETHQuantity) {
       value = this.estimationResponse.erc20TokenToPayFee
