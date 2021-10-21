@@ -82,7 +82,7 @@ export class Web3ProviderFeeNoRequest implements IFeeNoRequest {
     return signature;
   }
 
-  private _getSwapType(sendRequest: RequestParams): ExType {
+  getSwapType(sendRequest: RequestParams): ExType {
     if (sendRequest.exType !== 'optimalSwap') {
       return sendRequest.exType;
     }
@@ -231,7 +231,7 @@ export class Web3ProviderFeeNoRequest implements IFeeNoRequest {
    * @returns {Promise<SubmissionResponse>}
    */
   async send(sendRequest: RequestParams): Promise<SubmissionResponse> {
-    const eXtype = this._getSwapType(sendRequest);
+    const eXtype = this.getSwapType(sendRequest);
 
     const approvalTxRawData = await this._approveTokensUse(eXtype);
 

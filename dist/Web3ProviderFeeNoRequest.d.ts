@@ -1,7 +1,7 @@
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
 import Common from '@ethereumjs/common';
 import { FeeNoApiRequests } from './FeeNoApiRequests';
-import { EstimationResponse, RequestParams, SubmissionResponse, SupportedChains } from './types';
+import { EstimationResponse, ExType, RequestParams, SubmissionResponse, SupportedChains } from './types';
 import { IFeeNoRequest } from './FeeNoRequest';
 export declare class Web3ProviderFeeNoRequest implements IFeeNoRequest {
     estimationResponse: EstimationResponse;
@@ -26,7 +26,7 @@ export declare class Web3ProviderFeeNoRequest implements IFeeNoRequest {
      */
     constructor(estimationResponse: EstimationResponse, provider: Web3Provider, chainId: SupportedChains, FeeNoApi: FeeNoApiRequests);
     private _getSignature;
-    private _getSwapType;
+    getSwapType(sendRequest: RequestParams): ExType;
     private _approveTokensUse;
     private _approveETHTransfer;
     private _signTransfer;

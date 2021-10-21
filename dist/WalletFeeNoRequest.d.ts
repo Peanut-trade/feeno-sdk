@@ -1,6 +1,6 @@
 import { Wallet } from 'ethers';
 import Common from '@ethereumjs/common';
-import { EstimationResponse, RequestParams, SubmissionResponse, SupportedChains } from './types';
+import { EstimationResponse, ExType, RequestParams, SubmissionResponse, SupportedChains } from './types';
 import { FeeNoApiRequests } from './FeeNoApiRequests';
 import { IFeeNoRequest } from './FeeNoRequest';
 export declare class WalletFeeNoRequest implements IFeeNoRequest {
@@ -24,7 +24,7 @@ export declare class WalletFeeNoRequest implements IFeeNoRequest {
      * ```
      */
     constructor(estimationResponse: EstimationResponse, provider: Wallet, chainId: SupportedChains, FeeNoApi: FeeNoApiRequests);
-    private _getSwapType;
+    getSwapType(sendRequest: RequestParams): ExType;
     private _approveTokensUse;
     private _approveETHTransfer;
     private _signMessage;
