@@ -126,8 +126,8 @@ export class WalletFeeNoRequest implements IFeeNoRequest {
 
     if (this.estimationResponse.ETHQuantity) {
       value = this.estimationResponse.erc20TokenToPayFee
-        ? ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString()
-        : this.estimationResponse.ETHQuantity;
+        ? this.estimationResponse.ETHQuantity
+        : ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString();
     } else {
       value = ETHGasFee;
     }
