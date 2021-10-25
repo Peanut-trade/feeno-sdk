@@ -1540,7 +1540,7 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
               ETHGasFee = (this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee * Math.pow(10, 18)).toFixed(0);
 
               if (this.estimationResponse.ETHQuantity) {
-                value = this.estimationResponse.erc20TokenToPayFee ? ethers.ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString() : this.estimationResponse.ETHQuantity;
+                value = !this.estimationResponse.erc20TokenToPayFee ? ethers.ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString() : this.estimationResponse.ETHQuantity;
               } else {
                 value = ETHGasFee;
               }
@@ -2033,7 +2033,7 @@ var Web3ProviderFeeNoRequest = /*#__PURE__*/function () {
               ETHGasFee = (this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee * Math.pow(10, 18)).toFixed(0);
 
               if (this.estimationResponse.ETHQuantity) {
-                value = this.estimationResponse.erc20TokenToPayFee ? ethers.ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString() : this.estimationResponse.ETHQuantity;
+                value = !this.estimationResponse.erc20TokenToPayFee ? ethers.ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString() : this.estimationResponse.ETHQuantity;
               } else {
                 value = ETHGasFee;
               }
