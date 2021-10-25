@@ -107,4 +107,10 @@ export interface RequestParams {
    * @memberof RequestParams
    */
   speed: Speed;
+  /**
+   *
+   * @type {number}
+   * @memberof RequestParams
+   */
+  blocksCountToResubmit?:number;
 }

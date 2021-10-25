@@ -1437,11 +1437,11 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
       return sendRequest.exType;
     }
 
-    if (!this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee || this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee < this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee) {
-      return ExType.DEX;
+    if (this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed] && this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee > this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee) {
+      return ExType.CEX;
     }
 
-    return ExType.CEX;
+    return ExType.DEX;
   };
 
   _proto._approveTokensUse = /*#__PURE__*/function () {
@@ -1538,10 +1538,10 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
             case 2:
               signerAddress = _context3.sent;
               feenoContractAddress = config[this.chainId].FeeNoContract;
-              ETHGasFee = (this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee * Math.pow(10, 18)).toFixed(0);
+              ETHGasFee = ethers.utils.parseEther(this.estimationResponse.executionSwap[exType].miningSpeed[speed].tokenBasedGasFee.toString());
 
               if (this.estimationResponse.ETHQuantity) {
-                value = !this.estimationResponse.erc20TokenToPayFee ? ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString() : this.estimationResponse.ETHQuantity;
+                value = this.estimationResponse.erc20TokenToPayFee ? this.estimationResponse.ETHQuantity : ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString();
               } else {
                 value = ETHGasFee;
               }
@@ -1714,7 +1714,7 @@ var WalletFeeNoRequest = /*#__PURE__*/function () {
                 userSign: metadataSignature,
                 processingMode: eXtype,
                 miningSpeed: sendRequest.speed,
-                blocksCountToResubmit: 20
+                blocksCountToResubmit: sendRequest.blocksCountToResubmit ? sendRequest.blocksCountToResubmit : 20
               };
               _context6.next = 16;
               return this.FeeNoApi.send(txToSubmit);
@@ -1919,11 +1919,11 @@ var Web3ProviderFeeNoRequest = /*#__PURE__*/function () {
       return sendRequest.exType;
     }
 
-    if (!this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee || this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee < this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee) {
-      return ExType.DEX;
+    if (this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed] && this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee > this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee) {
+      return ExType.CEX;
     }
 
-    return ExType.CEX;
+    return ExType.DEX;
   };
 
   _proto._approveTokensUse = /*#__PURE__*/function () {
@@ -2031,10 +2031,10 @@ var Web3ProviderFeeNoRequest = /*#__PURE__*/function () {
             case 2:
               signerAddress = _context4.sent;
               feenoContractAddress = config[this.chainId].FeeNoContract;
-              ETHGasFee = (this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee * Math.pow(10, 18)).toFixed(0);
+              ETHGasFee = ethers.utils.parseEther(this.estimationResponse.executionSwap[exType].miningSpeed[speed].tokenBasedGasFee.toString());
 
               if (this.estimationResponse.ETHQuantity) {
-                value = !this.estimationResponse.erc20TokenToPayFee ? ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString() : this.estimationResponse.ETHQuantity;
+                value = this.estimationResponse.erc20TokenToPayFee ? this.estimationResponse.ETHQuantity : ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString();
               } else {
                 value = ETHGasFee;
               }
@@ -2219,7 +2219,7 @@ var Web3ProviderFeeNoRequest = /*#__PURE__*/function () {
                 userSign: metadataSignature,
                 processingMode: eXtype,
                 miningSpeed: sendRequest.speed,
-                blocksCountToResubmit: 20
+                blocksCountToResubmit: sendRequest.blocksCountToResubmit ? sendRequest.blocksCountToResubmit : 20
               };
               _context7.next = 16;
               return this.FeeNoApi.send(txToSubmit);

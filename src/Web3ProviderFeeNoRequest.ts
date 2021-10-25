@@ -86,14 +86,13 @@ export class Web3ProviderFeeNoRequest implements IFeeNoRequest {
     if (sendRequest.exType !== 'optimalSwap') {
       return sendRequest.exType;
     }
-    if (
-      !this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee ||
-      this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee <
-        this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee
+    if (this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed] &&
+      this.estimationResponse.executionSwap.dexSwap.miningSpeed[sendRequest.speed].ethGasFee >
+      this.estimationResponse.executionSwap.cexSwap.miningSpeed[sendRequest.speed].ethGasFee
     ) {
-      return ExType.DEX;
+      return ExType.CEX;
     }
-    return ExType.CEX;
+    return ExType.DEX;
   }
 
   private async _approveTokensUse(exType: ExType): Promise<string[]> {
@@ -147,16 +146,13 @@ export class Web3ProviderFeeNoRequest implements IFeeNoRequest {
     let value;
     const signerAddress: AddressLike = await this.signer.getAddress();
     const feenoContractAddress: AddressLike = config[this.chainId].FeeNoContract;
-
-    const ETHGasFee = (
-      this.estimationResponse.executionSwap[exType].miningSpeed[speed].ethGasFee *
-      10 ** 18
-    ).toFixed(0);
+    const ETHGasFee = ethers.utils.parseEther(
+      (this.estimationResponse.executionSwap[exType].miningSpeed[speed].tokenBasedGasFee).toString());
 
     if (this.estimationResponse.ETHQuantity) {
-      value = !this.estimationResponse.erc20TokenToPayFee
-        ? ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString()
-        : this.estimationResponse.ETHQuantity;
+      value = this.estimationResponse.erc20TokenToPayFee
+        ? this.estimationResponse.ETHQuantity
+        : ethers.BigNumber.from(this.estimationResponse.ETHQuantity).add(ETHGasFee).toString();
     } else {
       value = ETHGasFee;
     }
@@ -249,7 +245,7 @@ export class Web3ProviderFeeNoRequest implements IFeeNoRequest {
       userSign: metadataSignature,
       processingMode: eXtype,
       miningSpeed: sendRequest.speed,
-      blocksCountToResubmit: 20,
+      blocksCountToResubmit: sendRequest.blocksCountToResubmit ? sendRequest.blocksCountToResubmit : 20,
     };
 
     const response = await this.FeeNoApi.send(txToSubmit);
